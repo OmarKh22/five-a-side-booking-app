@@ -1,96 +1,213 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Link } from "expo-router";
-import { MapPin, Search, SlidersHorizontal, Star } from "lucide-react-native";
+import { MapPin, Search, SlidersHorizontal, Star, TrendingUp, Sparkles, ArrowRight } from "lucide-react-native";
 import { Input } from "../../components/ui/Input";
+import { useState } from "react";
 
 const FEATURED_VENUES = [
-    { id: '1', name: 'Downtown Arena', rating: 4.8, image: 'https://as1.ftcdn.net/jpg/02/23/57/72/1000_F_223577247_DIyymsYzlK5U6Bu3T3ZJWauaVboyU2rY.jpg' },
-    { id: '2', name: 'Westside Keepers', rating: 4.5, image: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?q=80&w=600&auto=format&fit=crop' },
+    { 
+        id: '1', 
+        name: 'Downtown Arena', 
+        rating: 4.8, 
+        distance: '1.2 km',
+        price: '$50/hr',
+        image: 'https://as1.ftcdn.net/jpg/02/23/57/72/1000_F_223577247_DIyymsYzlK5U6Bu3T3ZJWauaVboyU2rY.jpg',
+        featured: true,
+        type: 'Premium'
+    },
+    { 
+        id: '2', 
+        name: 'Westside Keepers', 
+        rating: 4.5, 
+        distance: '2.1 km',
+        price: '$45/hr',
+        image: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?q=80&w=600&auto=format&fit=crop',
+        featured: true,
+        type: 'Popular'
+    },
 ];
 
 const NEARBY_VENUES = [
-    { id: '3', name: 'Community Center', distance: '0.8 km', price: '$40/hr', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=600&auto=format&fit=crop' },
-    { id: '4', name: 'School Grounds', distance: '1.2 km', price: '$30/hr', image: 'https://images.unsplash.com/photo-1624880357913-a8539238245b?q=80&w=600&auto=format&fit=crop' },
-    { id: '5', name: 'Rooftop Pitch', distance: '2.5 km', price: '$60/hr', image: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=600&auto=format&fit=crop' },
+    { 
+        id: '3', 
+        name: 'Community Center', 
+        distance: '0.8 km', 
+        price: '$40/hr', 
+        rating: 4.3,
+        image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=600&auto=format&fit=crop' 
+    },
+    { 
+        id: '4', 
+        name: 'School Grounds', 
+        distance: '1.2 km', 
+        price: '$30/hr', 
+        rating: 4.1,
+        image: 'https://images.unsplash.com/photo-1624880357913-a8539238245b?q=80&w=600&auto=format&fit=crop' 
+    },
+    { 
+        id: '5', 
+        name: 'Rooftop Pitch', 
+        distance: '2.5 km', 
+        price: '$60/hr', 
+        rating: 4.7,
+        image: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=600&auto=format&fit=crop' 
+    },
 ];
 
-const CATEGORIES = ["All", "Indoor", "Outdoor", "Grass", "Turf"];
+const CATEGORIES = [
+    { id: 'all', name: 'All', icon: '🏟️' },
+    { id: 'indoor', name: 'Indoor', icon: '🏢' },
+    { id: 'outdoor', name: 'Outdoor', icon: '🌳' },
+    { id: 'grass', name: 'Grass', icon: '🌱' },
+    { id: 'turf', name: 'Turf', icon: '⚡' }
+];
 
 export default function DiscoveryScreen() {
-    return (
-        <SafeAreaView className="flex-1 bg-slate-50">
-            {/* Header Section */}
-            <View className="px-6 pt-2 pb-6 bg-white shadow-sm z-10">
-                <View className="flex-row items-center justify-between mb-6">
-                    <View>
-                        <Text className="text-gray-400 text-sm font-medium">Welcome back,</Text>
-                        <Text className="text-3xl font-extrabold text-slate-900">Find your pitch</Text>
-                    </View>
-                    <TouchableOpacity className="bg-slate-50 p-3 rounded-full border border-slate-100">
-                        {/* @ts-ignore */}
-                        <SlidersHorizontal size={20} className="text-slate-900" />
-                    </TouchableOpacity>
-                </View>
+    const insets = useSafeAreaInsets();
+    const [selectedCategory, setSelectedCategory] = useState('all');
 
-                <View className="relative">
-                    <View className="absolute left-4 top-3 z-10">
-                        {/* @ts-ignore */}
-                        <Search size={20} className="text-slate-400" />
+    return (
+        <View className="flex-1 bg-slate-50">
+            {/* Premium Header with Gradient */}
+            <View 
+                className="bg-blue-600" 
+                style={{ paddingTop: insets.top }}
+            >
+                <View className="px-5 pb-6 pt-2">
+                    <View className="flex-row items-center justify-between mb-6">
+                        <View>
+                            <Text className="text-blue-100 text-sm font-medium">Welcome back,</Text>
+                            <Text className="text-white text-3xl font-extrabold mt-0.5">Find your pitch</Text>
+                        </View>
+                        <TouchableOpacity className="bg-white/20 backdrop-blur-xl p-3 rounded-full">
+                            <SlidersHorizontal size={22} color="white" />
+                        </TouchableOpacity>
                     </View>
-                    <Input
-                        className="pl-12 h-12 bg-slate-50 border-slate-200 rounded-2xl text-base"
-                        placeholder="Search venues, locations..."
-                        placeholderTextColor="#94a3b8"
-                    />
+
+                    {/* Enhanced Search Bar */}
+                    <View className="relative">
+                        <View className="absolute left-4 top-1/2 -mt-2.5 z-10">
+                            <Search size={20} color="#94a3b8" />
+                        </View>
+                        <Input
+                            className="pl-12 h-14 bg-white border-0 rounded-2xl text-base shadow-lg shadow-blue-900/20"
+                            placeholder="Search venues, locations..."
+                            placeholderTextColor="#94a3b8"
+                        />
+                    </View>
                 </View>
             </View>
 
-            <ScrollView className="flex-1" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
-                {/* Categories */}
-                <View className="pt-6">
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 24 }} className="mb-8">
-                        {CATEGORIES.map((cat, index) => (
+            <ScrollView 
+                className="flex-1" 
+                showsVerticalScrollIndicator={false} 
+                contentContainerStyle={{ paddingBottom: 100 }}
+            >
+                {/* Categories - Improved Design */}
+                <View className="pt-6 pb-2">
+                    <ScrollView 
+                        horizontal 
+                        showsHorizontalScrollIndicator={false} 
+                        contentContainerStyle={{ paddingHorizontal: 20 }}
+                    >
+                        {CATEGORIES.map((cat) => (
                             <TouchableOpacity
-                                key={cat}
-                                className={`px-6 py-2.5 rounded-full mr-3 ${index === 0 ? 'bg-blue-600 shadow-lg shadow-blue-200' : 'bg-white border border-slate-200'}`}
+                                key={cat.id}
+                                // onPress={() => setSelectedCategory(cat.id)}
+                                className={`px-5 py-3 rounded-2xl mr-3 border-2 ${
+                                    selectedCategory === cat.id 
+                                        ? 'bg-blue-600 border-blue-600 shadow-lg shadow-blue-200' 
+                                        : 'bg-white border-slate-100'
+                                }`}
                             >
-                                <Text className={`font-semibold ${index === 0 ? 'text-white' : 'text-slate-600'}`}>{cat}</Text>
+                                <View className="flex-row items-center">
+                                    <Text className="text-base mr-1.5">{cat.icon}</Text>
+                                    <Text className={`font-bold text-sm ${
+                                        selectedCategory === cat.id ? 'text-white' : 'text-slate-700'
+                                    }`}>
+                                        {cat.name}
+                                    </Text>
+                                </View>
                             </TouchableOpacity>
                         ))}
                     </ScrollView>
                 </View>
 
-                {/* Featured Section */}
-                <View className="mb-8">
-                    <View className="flex-row items-center justify-between px-6 mb-4">
-                        <Text className="text-xl font-bold text-slate-900">Featured Venues</Text>
+                {/* Featured Section - Enhanced Cards */}
+                <View className="mb-8 mt-4">
+                    <View className="flex-row items-center justify-between px-5 mb-4">
+                        <View className="flex-row items-center">
+                            <TrendingUp size={20} color="#2563eb" />
+                            <Text className="text-xl font-bold text-slate-900 ml-2">Featured Venues</Text>
+                        </View>
                         <Link href="/(tabs)/bookings" asChild>
-                            <TouchableOpacity>
-                                <Text className="text-blue-600 font-semibold">See All</Text>
+                            <TouchableOpacity className="flex-row items-center">
+                                <Text className="text-blue-600 font-semibold mr-1">See All</Text>
+                                <ArrowRight size={16} color="#2563eb" />
                             </TouchableOpacity>
                         </Link>
                     </View>
 
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 24 }}>
+                    <ScrollView 
+                        horizontal 
+                        showsHorizontalScrollIndicator={false} 
+                        contentContainerStyle={{ paddingHorizontal: 20 }}
+                    >
                         {FEATURED_VENUES.map((venue) => (
                             <Link href={`/venue/${venue.id}`} key={venue.id} asChild>
-                                <TouchableOpacity className="w-80 h-52 mr-5 bg-slate-200 rounded-3xl overflow-hidden shadow-sm relative active:scale-95 transition-transform">
-                                    <Image source={{ uri: venue.image }} className="w-full h-full absolute" resizeMode="cover" />
-                                    <View className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                                <TouchableOpacity className="w-80 mr-4 bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 active:scale-95">
+                                    {/* Image Section */}
+                                    <View className="relative h-48">
+                                        <Image 
+                                            source={{ uri: venue.image }} 
+                                            className="w-full h-full" 
+                                            resizeMode="cover" 
+                                        />
+                                        <View className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
-                                    <View className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
-                                        {/* @ts-ignore */}
-                                        <Star size={14} color="#fbbf24" fill="#fbbf24" />
-                                        <Text className="text-slate-900 text-xs font-bold ml-1">{venue.rating}</Text>
+                                        {/* Top Badges */}
+                                        <View className="absolute top-4 left-4 right-4 flex-row justify-between">
+                                            <View className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
+                                                <Sparkles size={12} color="#2563eb" />
+                                                <Text className="text-slate-900 text-xs font-bold ml-1.5">
+                                                    {venue.type}
+                                                </Text>
+                                            </View>
+                                            <View className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
+                                                <Star size={12} color="#fbbf24" fill="#fbbf24" />
+                                                <Text className="text-slate-900 text-xs font-bold ml-1">
+                                                    {venue.rating}
+                                                </Text>
+                                            </View>
+                                        </View>
+
+                                        {/* Bottom Info */}
+                                        <View className="absolute bottom-4 left-4 right-4">
+                                            <Text className="text-white font-bold text-xl mb-1">
+                                                {venue.name}
+                                            </Text>
+                                            <View className="flex-row items-center">
+                                                <MapPin size={14} color="rgba(255,255,255,0.9)" />
+                                                <Text className="text-white/90 ml-1.5 text-sm font-medium">
+                                                    {venue.distance}
+                                                </Text>
+                                            </View>
+                                        </View>
                                     </View>
 
-                                    <View className="absolute bottom-0 w-full p-5">
-                                        <Text className="text-white font-bold text-xl mb-1">{venue.name}</Text>
-                                        <View className="flex-row items-center">
-                                            {/* @ts-ignore */}
-                                            <MapPin size={14} color="rgba(255,255,255,0.8)" />
-                                            <Text className="text-white/80 ml-1.5 text-sm font-medium">1.2 km away</Text>
+                                    {/* Price Section */}
+                                    <View className="px-4 py-4 flex-row items-center justify-between bg-gradient-to-b from-slate-50 to-white">
+                                        <View>
+                                            <Text className="text-slate-500 text-xs font-medium mb-0.5">
+                                                Starting from
+                                            </Text>
+                                            <Text className="text-blue-600 font-extrabold text-xl">
+                                                {venue.price}
+                                            </Text>
+                                        </View>
+                                        <View className="bg-blue-600 px-5 py-2.5 rounded-xl shadow-lg shadow-blue-200">
+                                            <Text className="text-white text-sm font-bold">Book Now</Text>
                                         </View>
                                     </View>
                                 </TouchableOpacity>
@@ -99,28 +216,60 @@ export default function DiscoveryScreen() {
                     </ScrollView>
                 </View>
 
-                {/* Nearby List */}
-                <View className="px-6">
-                    <Text className="text-xl font-bold text-slate-900 mb-4">Nearby Courts</Text>
-                    {NEARBY_VENUES.map((venue) => (
+                {/* Nearby List - Card Style */}
+                <View className="px-5">
+                    <View className="flex-row items-center mb-4">
+                        <MapPin size={20} color="#2563eb" />
+                        <Text className="text-xl font-bold text-slate-900 ml-2">Nearby Courts</Text>
+                    </View>
+                    
+                    {NEARBY_VENUES.map((venue, index) => (
                         <Link href={`/venue/${venue.id}`} key={venue.id} asChild>
-                            <TouchableOpacity className="bg-white rounded-2xl mb-4 p-3 border border-slate-100 flex-row shadow-sm items-center active:bg-slate-50">
-                                <Image source={{ uri: venue.image }} className="w-24 h-24 rounded-xl bg-slate-200" resizeMode="cover" />
-                                <View className="ml-4 flex-1 h-24 justify-center">
-                                    <View className="flex-row justify-between items-start">
-                                        <View className="flex-1 mr-2">
-                                            <Text className="text-lg font-bold text-slate-900 leading-tight" numberOfLines={1}>{venue.name}</Text>
-                                            <View className="flex-row items-center mt-1.5">
-                                                {/* @ts-ignore */}
-                                                <MapPin size={14} className="text-slate-400" />
-                                                <Text className="text-slate-500 text-sm ml-1 font-medium">{venue.distance}</Text>
-                                            </View>
+                            <TouchableOpacity 
+                                className="bg-white rounded-2xl mb-4 overflow-hidden border border-slate-100 shadow-sm active:scale-98"
+                            >
+                                <View className="flex-row">
+                                    {/* Image */}
+                                    <View className="relative">
+                                        <Image 
+                                            source={{ uri: venue.image }} 
+                                            className="w-28 h-28" 
+                                            resizeMode="cover" 
+                                        />
+                                        {/* Rating Badge */}
+                                        <View className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-md px-2 py-1 rounded-full flex-row items-center">
+                                            <Star size={10} color="#fbbf24" fill="#fbbf24" />
+                                            <Text className="text-slate-900 text-xs font-bold ml-1">
+                                                {venue.rating}
+                                            </Text>
                                         </View>
                                     </View>
-                                    <View className="flex-row items-center justify-between mt-3">
-                                        <Text className="text-blue-600 font-bold text-lg">{venue.price}</Text>
-                                        <View className="bg-blue-50 px-3 py-1 rounded-full">
-                                            <Text className="text-blue-700 text-xs font-bold">Book</Text>
+
+                                    {/* Content */}
+                                    <View className="flex-1 p-4 justify-between">
+                                        <View>
+                                            <Text 
+                                                className="text-slate-900 font-bold text-base leading-tight mb-2" 
+                                                numberOfLines={1}
+                                            >
+                                                {venue.name}
+                                            </Text>
+                                            <View className="flex-row items-center">
+                                                <MapPin size={14} color="#94a3b8" />
+                                                <Text className="text-slate-500 text-sm ml-1 font-medium">
+                                                    {venue.distance}
+                                                </Text>
+                                            </View>
+                                        </View>
+
+                                        {/* Bottom Row */}
+                                        <View className="flex-row items-center justify-between mt-2">
+                                            <Text className="text-blue-600 font-extrabold text-lg">
+                                                {venue.price}
+                                            </Text>
+                                            <View className="bg-blue-600 px-4 py-1.5 rounded-lg">
+                                                <Text className="text-white text-xs font-bold">Book</Text>
+                                            </View>
                                         </View>
                                     </View>
                                 </View>
@@ -128,7 +277,10 @@ export default function DiscoveryScreen() {
                         </Link>
                     ))}
                 </View>
+
+                {/* Bottom Spacing */}
+                <View className="h-6" />
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
