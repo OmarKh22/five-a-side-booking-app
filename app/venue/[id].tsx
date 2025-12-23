@@ -148,7 +148,7 @@ export default function VenueDetailsScreen() {
         <View className="flex-1 bg-slate-50">
             <Stack.Screen options={{ headerShown: false }} />
 
-            {/* Custom Header with Back Button */}
+            {/* Custom Header with Back Button - Fixed */}
             <View 
                 className="absolute top-0 left-0 right-0 z-50 flex-row items-center justify-between px-5"
                 style={{ paddingTop: insets.top + 12 }}
@@ -165,57 +165,59 @@ export default function VenueDetailsScreen() {
                 </View>
             </View>
 
-            <ScrollView 
-                className="flex-1" 
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 120 }}
-            >
-                {/* Hero Image with Gradient Overlay */}
-                <View className="relative h-80">
-                    <Image
-                        source={{ uri: venue.image }}
-                        className="w-full h-full"
-                        resizeMode="cover"
-                    />
-                    <View className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            {/* Fixed Hero Section */}
+            <View className="relative h-80">
+                <Image
+                    source={{ uri: venue.image }}
+                    className="w-full h-full"
+                    resizeMode="cover"
+                />
+                <View className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-                    {/* Floating Info Card */}
-                    <View className="absolute bottom-0 left-0 right-0 px-5 pb-6">
-                        <View className="bg-white/95 backdrop-blur-xl rounded-3xl p-5 shadow-2xl border border-white/20">
-                            <View className="flex-row items-start justify-between mb-3">
-                                <View className="flex-1 mr-4">
-                                    <Text className="text-slate-900 font-extrabold text-2xl leading-tight mb-2">
-                                        {venue.name}
-                                    </Text>
-                                    <View className="flex-row items-center mb-1">
-                                        <MapPin size={14} color="#64748b" />
-                                        <Text className="text-slate-500 text-sm ml-1.5 font-medium flex-1" numberOfLines={1}>
-                                            {venue.address}
-                                        </Text>
-                                    </View>
-                                    <Text className="text-blue-600 text-sm font-semibold">
-                                        {venue.distance}
+                {/* Floating Info Card */}
+                <View className="absolute bottom-0 left-0 right-0 px-5 pb-6">
+                    <View className="bg-white/95 backdrop-blur-xl rounded-3xl p-5 shadow-2xl border border-white/20">
+                        <View className="flex-row items-start justify-between mb-3">
+                            <View className="flex-1 mr-4">
+                                <Text className="text-slate-900 font-extrabold text-2xl leading-tight mb-2">
+                                    {venue.name}
+                                </Text>
+                                <View className="flex-row items-center mb-1">
+                                    <MapPin size={14} color="#64748b" />
+                                    <Text className="text-slate-500 text-sm ml-1.5 font-medium flex-1" numberOfLines={1}>
+                                        {venue.address}
                                     </Text>
                                 </View>
-                                <View className="bg-blue-600 px-4 py-2.5 rounded-2xl shadow-lg shadow-blue-200">
-                                    <View className="flex-row items-center">
-                                        <Star size={14} color="white" fill="white" />
-                                        <Text className="text-white font-extrabold text-lg ml-1.5">
-                                            {venue.rating}
-                                        </Text>
-                                    </View>
-                                    <Text className="text-blue-100 text-xs font-medium text-center mt-0.5">
-                                        {venue.reviews} reviews
+                                <Text className="text-blue-600 text-sm font-semibold">
+                                    {venue.distance}
+                                </Text>
+                            </View>
+                            <View className="bg-blue-600 px-4 py-2.5 rounded-2xl shadow-lg shadow-blue-200">
+                                <View className="flex-row items-center">
+                                    <Star size={14} color="white" fill="white" />
+                                    <Text className="text-white font-extrabold text-lg ml-1.5">
+                                        {venue.rating}
                                     </Text>
                                 </View>
+                                <Text className="text-blue-100 text-xs font-medium text-center mt-0.5">
+                                    {venue.reviews} reviews
+                                </Text>
                             </View>
                         </View>
                     </View>
                 </View>
+            </View>
 
+            {/* Scrollable Content Section */}
+            <ScrollView 
+                className="flex-1" 
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 140 }}
+            >
                 {/* Gallery Preview */}
                 {venue.gallery && venue.gallery.length > 1 && (
-                    <View className="px-5 mt-6">
+                    <View className="px-5 pt-6">
+                        <Text className="text-slate-900 font-bold text-lg mb-3">Gallery</Text>
                         <ScrollView 
                             horizontal 
                             showsHorizontalScrollIndicator={false}
@@ -223,12 +225,16 @@ export default function VenueDetailsScreen() {
                         >
                             <View className="flex-row gap-3">
                                 {venue.gallery.slice(1).map((img: string, index: number) => (
-                                    <Image
+                                    <TouchableOpacity 
                                         key={index}
-                                        source={{ uri: img }}
-                                        className="w-32 h-24 rounded-2xl bg-slate-200"
-                                        resizeMode="cover"
-                                    />
+                                        className="active:opacity-80"
+                                    >
+                                        <Image
+                                            source={{ uri: img }}
+                                            className="w-40 h-32 rounded-2xl bg-slate-200"
+                                            resizeMode="cover"
+                                        />
+                                    </TouchableOpacity>
                                 ))}
                             </View>
                         </ScrollView>
