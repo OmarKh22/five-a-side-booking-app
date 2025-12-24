@@ -1,11 +1,12 @@
 import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { 
-    MapPin, Wifi, Car, Star, Clock, CheckCircle, 
-    ArrowLeft, Sparkles, Users, Shield, Zap, Calendar 
+import {
+    MapPin, Wifi, Car, Star, Clock, CheckCircle,
+    ArrowLeft, Sparkles, Users, Shield, Zap, Calendar
 } from "lucide-react-native";
 import { Button } from "../../components/ui/Button";
+import { useTranslation } from "react-i18next";
 
 const { width } = Dimensions.get('window');
 
@@ -142,6 +143,7 @@ export default function VenueDetailsScreen() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const insets = useSafeAreaInsets();
+    const { t } = useTranslation();
     const venue = (VENUE_DETAILS as Record<string, any>)[id as string] || VENUE_DETAILS["default"];
 
     return (
@@ -149,7 +151,7 @@ export default function VenueDetailsScreen() {
             <Stack.Screen options={{ headerShown: false }} />
 
             {/* Custom Header with Back Button - Fixed */}
-            <View 
+            <View
                 className="absolute top-0 left-0 right-0 z-50 flex-row items-center justify-between px-5"
                 style={{ paddingTop: insets.top + 12 }}
             >
@@ -209,8 +211,8 @@ export default function VenueDetailsScreen() {
             </View>
 
             {/* Scrollable Content Section */}
-            <ScrollView 
-                className="flex-1" 
+            <ScrollView
+                className="flex-1"
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 140 }}
             >
@@ -218,14 +220,14 @@ export default function VenueDetailsScreen() {
                 {venue.gallery && venue.gallery.length > 1 && (
                     <View className="px-5 pt-6">
                         <Text className="text-slate-900 font-bold text-lg mb-3">Gallery</Text>
-                        <ScrollView 
-                            horizontal 
+                        <ScrollView
+                            horizontal
                             showsHorizontalScrollIndicator={false}
                             className="-mx-5 px-5"
                         >
                             <View className="flex-row gap-3">
                                 {venue.gallery.slice(1).map((img: string, index: number) => (
-                                    <TouchableOpacity 
+                                    <TouchableOpacity
                                         key={index}
                                         className="active:opacity-80"
                                     >
@@ -248,22 +250,22 @@ export default function VenueDetailsScreen() {
                             <View className="bg-blue-50 w-10 h-10 rounded-full items-center justify-center mb-2">
                                 <Clock size={18} color="#2563eb" />
                             </View>
-                            <Text className="text-slate-500 text-xs font-medium mb-0.5">Surface</Text>
+                            <Text className="text-slate-500 text-xs font-medium mb-0.5">{t('venue.surface')}</Text>
                             <Text className="text-slate-900 font-bold text-sm">{venue.surface}</Text>
                         </View>
                         <View className="flex-1 bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
                             <View className="bg-green-50 w-10 h-10 rounded-full items-center justify-center mb-2">
                                 <Users size={18} color="#16a34a" />
                             </View>
-                            <Text className="text-slate-500 text-xs font-medium mb-0.5">Capacity</Text>
+                            <Text className="text-slate-500 text-xs font-medium mb-0.5">{t('venue.capacity')}</Text>
                             <Text className="text-slate-900 font-bold text-sm">{venue.capacity}</Text>
                         </View>
                         <View className="flex-1 bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
                             <View className="bg-amber-50 w-10 h-10 rounded-full items-center justify-center mb-2">
                                 <Calendar size={18} color="#d97706" />
                             </View>
-                            <Text className="text-slate-500 text-xs font-medium mb-0.5">Open</Text>
-                            <Text className="text-slate-900 font-bold text-sm">Daily</Text>
+                            <Text className="text-slate-500 text-xs font-medium mb-0.5">{t('venue.open')}</Text>
+                            <Text className="text-slate-900 font-bold text-sm">{t('venue.daily')}</Text>
                         </View>
                     </View>
                 </View>
@@ -271,7 +273,7 @@ export default function VenueDetailsScreen() {
                 {/* Description Section */}
                 <View className="px-5 mt-6">
                     <View className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-                        <Text className="text-slate-900 font-bold text-lg mb-3">About this venue</Text>
+                        <Text className="text-slate-900 font-bold text-lg mb-3">{t('venue.about')}</Text>
                         <Text className="text-slate-600 leading-6 mb-4">
                             {venue.description}
                         </Text>
@@ -287,7 +289,7 @@ export default function VenueDetailsScreen() {
                 {/* Facilities Section */}
                 <View className="px-5 mt-6">
                     <View className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-                        <Text className="text-slate-900 font-bold text-lg mb-4">Facilities & Amenities</Text>
+                        <Text className="text-slate-900 font-bold text-lg mb-4">{t('venue.facilities')}</Text>
                         <View className="flex-row flex-wrap gap-3">
                             {venue.facilities.map((item: any, index: number) => (
                                 <View
@@ -308,14 +310,14 @@ export default function VenueDetailsScreen() {
                 <View className="px-5 mt-6">
                     <View className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
                         <View className="flex-row items-center justify-between mb-3">
-                            <Text className="text-slate-900 font-bold text-lg">Location</Text>
+                            <Text className="text-slate-900 font-bold text-lg">{t('venue.location')}</Text>
                             <TouchableOpacity className="bg-blue-50 px-3 py-1.5 rounded-lg">
-                                <Text className="text-blue-600 font-semibold text-xs">Get Directions</Text>
+                                <Text className="text-blue-600 font-semibold text-xs">{t('venue.getDirections')}</Text>
                             </TouchableOpacity>
                         </View>
                         <View className="bg-slate-100 h-40 rounded-2xl items-center justify-center">
                             <MapPin size={32} color="#94a3b8" />
-                            <Text className="text-slate-400 text-sm mt-2">Map view</Text>
+                            <Text className="text-slate-400 text-sm mt-2">{t('venue.mapView')}</Text>
                         </View>
                     </View>
                 </View>
@@ -329,7 +331,7 @@ export default function VenueDetailsScreen() {
                 <View className="px-5 pt-4">
                     <View className="flex-row justify-between items-center mb-3">
                         <View>
-                            <Text className="text-slate-500 text-sm font-medium">Price per hour</Text>
+                            <Text className="text-slate-500 text-sm font-medium">{t('venue.pricePerHour')}</Text>
                             <Text className="text-blue-600 font-extrabold text-3xl">
                                 {venue.price}
                                 <Text className="text-slate-400 text-lg font-semibold">/hr</Text>
@@ -338,18 +340,18 @@ export default function VenueDetailsScreen() {
                         <View className="bg-green-50 px-3 py-2 rounded-xl border border-green-100">
                             <View className="flex-row items-center">
                                 <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
-                                <Text className="text-green-700 font-bold text-sm">Available Now</Text>
+                                <Text className="text-green-700 font-bold text-sm">{t('venue.availableNow')}</Text>
                             </View>
                         </View>
                     </View>
-                    <Button 
-                        size="lg" 
+                    <Button
+                        size="lg"
                         onPress={() => router.push(`/booking/${id}`)}
                         className="w-full rounded-xl shadow-lg shadow-blue-200"
                     >
                         <View className="flex-row items-center justify-center">
                             <Calendar size={20} color="white" />
-                            <Text className="text-white font-bold text-base ml-2">Book This Venue</Text>
+                            <Text className="text-white font-bold text-base ml-2">{t('venue.bookThisVenue')}</Text>
                         </View>
                     </Button>
                 </View>

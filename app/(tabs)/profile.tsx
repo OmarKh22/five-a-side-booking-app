@@ -2,17 +2,21 @@ import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useBookingStore } from "../../store/bookingStore";
-import { User, CreditCard, Settings, LogOut, ChevronRight } from "lucide-react-native";
+import { User, CreditCard, Settings, LogOut, ChevronRight, Globe } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function ProfileScreen() {
     const router = useRouter();
     const { user, logout } = useBookingStore();
+    const { t } = useTranslation();
+    const { language, setLanguage } = useLanguage();
 
     const handleLogout = () => {
-        Alert.alert("Sign Out", "Are you sure you want to sign out?", [
-            { text: "Cancel", style: "cancel" },
+        Alert.alert(t('auth.signOut'), t('profile.signOutConfirm'), [
+            { text: t('common.cancel'), style: "cancel" },
             {
-                text: "Sign Out",
+                text: t('auth.signOut'),
                 style: "destructive",
                 onPress: () => {
                     logout();
@@ -22,9 +26,29 @@ export default function ProfileScreen() {
         ]);
     };
 
+    const handleLanguageSwitch = () => {
+        Alert.alert(
+            t('profile.selectLanguage'),
+            '',
+            [
+                {
+                    text: t('profile.english'),
+                    onPress: () => setLanguage('en'),
+                    style: language === 'en' ? 'default' : 'default'
+                },
+                {
+                    text: t('profile.arabic'),
+                    onPress: () => setLanguage('ar'),
+                    style: language === 'ar' ? 'default' : 'default'
+                },
+                { text: t('common.cancel'), style: 'cancel' }
+            ]
+        );
+    };
+
     return (
         <SafeAreaView className="flex-1 bg-gray-50 px-4">
-            <Text className="text-2xl font-bold text-gray-900 mt-4 mb-6">Profile</Text>
+            <Text className="text-2xl font-bold text-gray-900 mt-4 mb-6">{t('profile.profile')}</Text>
 
             <View className="items-center mb-8">
                 <View className="w-24 h-24 bg-blue-100 rounded-full items-center justify-center mb-4 border-4 border-white shadow-sm">
@@ -32,7 +56,7 @@ export default function ProfileScreen() {
                         {user?.name?.[0] || "U"}
                     </Text>
                 </View>
-                <Text className="text-xl font-bold text-gray-900">{user?.name || "Guest User"}</Text>
+                <Text className="text-xl font-bold text-gray-900">{user?.name || t('profile.guestUser')}</Text>
                 <Text className="text-gray-500">{user?.email || "guest@example.com"}</Text>
             </View>
 
@@ -42,7 +66,7 @@ export default function ProfileScreen() {
                         {/* @ts-ignore */}
                         <User size={20} color="#2563eb" />
                     </View>
-                    <Text className="flex-1 ml-4 text-gray-700 font-medium">Personal Information</Text>
+                    <Text className="flex-1 ml-4 text-gray-700 font-medium">{t('profile.personalInfo')}</Text>
                     {/* @ts-ignore */}
                     <ChevronRight size={20} color="#9ca3af" />
                 </TouchableOpacity>
@@ -52,17 +76,33 @@ export default function ProfileScreen() {
                         {/* @ts-ignore */}
                         <CreditCard size={20} color="#2563eb" />
                     </View>
-                    <Text className="flex-1 ml-4 text-gray-700 font-medium">Payment Methods</Text>
+                    <Text className="flex-1 ml-4 text-gray-700 font-medium">{t('profile.paymentMethods')}</Text>
                     {/* @ts-ignore */}
                     <ChevronRight size={20} color="#9ca3af" />
                 </TouchableOpacity>
 
-                <TouchableOpacity className="flex-row items-center p-4">
+                <TouchableOpacity className="flex-row items-center p-4 border-b border-gray-100">
                     <View className="bg-blue-50 p-2 rounded-lg">
                         {/* @ts-ignore */}
                         <Settings size={20} color="#2563eb" />
                     </View>
-                    <Text className="flex-1 ml-4 text-gray-700 font-medium">Settings</Text>
+                    <Text className="flex-1 ml-4 text-gray-700 font-medium">{t('profile.settings')}</Text>
+                    {/* @ts-ignore */}
+                    <ChevronRight size={20} color="#9ca3af" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    onPress={handleLanguageSwitch}
+                    className="flex-row items-center p-4"
+                >
+                    <View className="bg-green-50 p-2 rounded-lg">
+                        {/* @ts-ignore */}
+                        <Globe size={20} color="#16a34a" />
+                    </View>
+                    <Text className="flex-1 ml-4 text-gray-700 font-medium">{t('profile.language')}</Text>
+                    <Text className="text-gray-500 mr-2">
+                        {language === 'en' ? 'English' : 'العربية'}
+                    </Text>
                     {/* @ts-ignore */}
                     <ChevronRight size={20} color="#9ca3af" />
                 </TouchableOpacity>
@@ -74,7 +114,7 @@ export default function ProfileScreen() {
             >
                 {/* @ts-ignore */}
                 <LogOut size={20} color="#ef4444" />
-                <Text className="ml-2 text-red-600 font-bold">Sign Out</Text>
+                <Text className="ml-2 text-red-600 font-bold">{t('auth.signOut')}</Text>
             </TouchableOpacity>
         </SafeAreaView>
     );

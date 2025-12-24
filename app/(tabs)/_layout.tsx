@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 // Simple icon component placeholder - in real app use Lucide or Ionicons
 function TabIcon({ color, name }: { color: string; name: string }) {
@@ -7,6 +8,8 @@ function TabIcon({ color, name }: { color: string; name: string }) {
 }
 
 export default function TabLayout() {
+    const { t } = useTranslation();
+
     return (
         <Tabs
             screenOptions={{
@@ -17,21 +20,21 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: "Discovery",
+                    title: t('tabs.discover'),
                     tabBarIcon: ({ color }) => <TabIcon color={color} name="search" />,
                 }}
             />
             <Tabs.Screen
                 name="bookings"
                 options={{
-                    title: "Bookings",
+                    title: t('tabs.bookings'),
                     tabBarIcon: ({ color }) => <TabIcon color={color} name="calendar" />,
                 }}
             />
             <Tabs.Screen
                 name="profile"
                 options={{
-                    title: "Profile",
+                    title: t('tabs.profile'),
                     tabBarIcon: ({ color }) => <TabIcon color={color} name="user" />,
                 }}
             />

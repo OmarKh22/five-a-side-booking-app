@@ -1,0 +1,123 @@
+{
+    "common": {
+        "cancel": "إلغاء",
+        "confirm": "تأكيد",
+        "save": "حفظ",
+        "delete": "حذف",
+        "edit": "تعديل",
+        "loading": "جاري التحميل...",
+        "error": "خطأ",
+        "success": "نجاح",
+        "search": "بحث",
+        "filter": "تصفية",
+        "viewAll": "عرض الكل",
+        "back": "رجوع",
+        "next": "التالي",
+        "done": "تم",
+        "close": "إغلاق",
+        "perHour": "/ساعة",
+        "kmAway": "كم"
+    },
+    "auth": {
+        "signIn": "تسجيل الدخول",
+        "signUp": "إنشاء حساب",
+        "signOut": "تسجيل الخروج",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "confirmPassword": "تأكيد كلمة المرور",
+        "fullName": "الاسم الكامل",
+        "forgotPassword": "نسيت كلمة المرور؟",
+        "dontHaveAccount": "ليس لديك حساب؟",
+        "alreadyHaveAccount": "لديك حساب بالفعل؟",
+        "bookYourPitch": "احجز ملعبك في ثوانٍ",
+        "createAccount": "إنشاء حساب",
+        "joinCommunity": "انضم إلى المجتمع",
+        "appName": "خماسي"
+    },
+    "discovery": {
+        "searchPlaceholder": "ابحث عن الملاعب، المواقع...",
+        "featuredVenues": "الملاعب المميزة",
+        "nearYou": "بالقرب منك",
+        "categories": {
+            "all": "الكل",
+            "indoor": "داخلي",
+            "outdoor": "خارجي",
+            "grass": "عشب",
+            "turf": "نجيل صناعي"
+        },
+        "premium": "مميز",
+        "popular": "شائع",
+        "reviews": "تقييمات"
+    },
+    "bookings": {
+        "myBookings": "حجوزاتي",
+        "noBookings": "لا توجد حجوزات نشطة",
+        "noBookingsDescription": "ستظهر مبارياتك القادمة هنا بمجرد إجراء حجز.",
+        "totalPaid": "المبلغ المدفوع",
+        "status": {
+            "confirmed": "مؤكد",
+            "pending": "قيد الانتظار",
+            "cancelled": "ملغي"
+        }
+    },
+    "profile": {
+        "profile": "الملف الشخصي",
+        "guestUser": "مستخدم زائر",
+        "personalInfo": "المعلومات الشخصية",
+        "paymentMethods": "طرق الدفع",
+        "settings": "الإعدادات",
+        "language": "اللغة",
+        "signOutConfirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+        "selectLanguage": "اختر اللغة",
+        "english": "English",
+        "arabic": "العربية"
+    },
+    "venue": {
+        "bookThisVenue": "احجز هذا الملعب",
+        "about": "عن هذا الملعب",
+        "facilities": "المرافق والخدمات",
+        "location": "الموقع",
+        "getDirections": "احصل على الاتجاهات",
+        "mapView": "عرض الخريطة",
+        "pricePerHour": "السعر بالساعة",
+        "availableNow": "متاح الآن",
+        "gallery": "معرض الصور",
+        "surface": "السطح",
+        "capacity": "السعة",
+        "open": "مفتوح",
+        "daily": "يومياً",
+        "artificialTurf": "عشب صناعي",
+        "indoorCourt": "ملعب داخلي",
+        "grass": "عشب طبيعي",
+        "syntheticTurf": "نجيل صناعي",
+        "players": "لاعبين",
+        "freeWifi": "واي فاي مجاني",
+        "parking": "موقف سيارات",
+        "showers": "دش",
+        "changingRooms": "غرف تبديل",
+        "security": "أمن",
+        "floodlights": "إضاءة كاشفة"
+    },
+    "booking": {
+        "bookVenue": "حجز الملعب",
+        "selectDateTime": "اختر التاريخ والوقت",
+        "selectDate": "اختر التاريخ",
+        "selectTime": "اختر الوقت",
+        "duration": "المدة",
+        "hour": "ساعة",
+        "hours": "ساعات",
+        "priceSummary": "ملخص السعر",
+        "basePrice": "السعر الأساسي",
+        "total": "الإجمالي",
+        "confirmBooking": "تأكيد الحجز",
+        "bookingConfirmed": "تم تأكيد الحجز!",
+        "bookingSuccess": "تم حجز ملعبك بنجاح. تحقق من حجوزاتك للتفاصيل.",
+        "chooseDate": "اختر التاريخ",
+        "chooseTime": "اختر الوقت"
+    },
+    "tabs": {
+        "discover": "اكتشف",
+        "bookings": "الحجوزات",
+        "profile": "الملف الشخصي"
+    }
+}

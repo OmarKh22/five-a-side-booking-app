@@ -1,0 +1,123 @@
+{
+    "common": {
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "search": "Search",
+        "filter": "Filter",
+        "viewAll": "View All",
+        "back": "Back",
+        "next": "Next",
+        "done": "Done",
+        "close": "Close",
+        "perHour": "/hr",
+        "kmAway": "km away"
+    },
+    "auth": {
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "signOut": "Sign Out",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "fullName": "Full Name",
+        "forgotPassword": "Forgot Password?",
+        "dontHaveAccount": "Don't have an account?",
+        "alreadyHaveAccount": "Already have an account?",
+        "bookYourPitch": "Book your pitch in seconds",
+        "createAccount": "Create Account",
+        "joinCommunity": "Join the community",
+        "appName": "5-a-Side"
+    },
+    "discovery": {
+        "searchPlaceholder": "Search venues, locations...",
+        "featuredVenues": "Featured Venues",
+        "nearYou": "Near You",
+        "categories": {
+            "all": "All",
+            "indoor": "Indoor",
+            "outdoor": "Outdoor",
+            "grass": "Grass",
+            "turf": "Turf"
+        },
+        "premium": "Premium",
+        "popular": "Popular",
+        "reviews": "reviews"
+    },
+    "bookings": {
+        "myBookings": "My Bookings",
+        "noBookings": "No active bookings found",
+        "noBookingsDescription": "Your upcoming games will appear here once you make a booking.",
+        "totalPaid": "Total Paid",
+        "status": {
+            "confirmed": "Confirmed",
+            "pending": "Pending",
+            "cancelled": "Cancelled"
+        }
+    },
+    "profile": {
+        "profile": "Profile",
+        "guestUser": "Guest User",
+        "personalInfo": "Personal Information",
+        "paymentMethods": "Payment Methods",
+        "settings": "Settings",
+        "language": "Language",
+        "signOutConfirm": "Are you sure you want to sign out?",
+        "selectLanguage": "Select Language",
+        "english": "English",
+        "arabic": "العربية"
+    },
+    "venue": {
+        "bookThisVenue": "Book This Venue",
+        "about": "About this venue",
+        "facilities": "Facilities & Amenities",
+        "location": "Location",
+        "getDirections": "Get Directions",
+        "mapView": "Map view",
+        "pricePerHour": "Price per hour",
+        "availableNow": "Available Now",
+        "gallery": "Gallery",
+        "surface": "Surface",
+        "capacity": "Capacity",
+        "open": "Open",
+        "daily": "Daily",
+        "artificialTurf": "Artificial Turf",
+        "indoorCourt": "Indoor Court",
+        "grass": "Grass",
+        "syntheticTurf": "Synthetic Turf",
+        "players": "players",
+        "freeWifi": "Free WiFi",
+        "parking": "Parking",
+        "showers": "Showers",
+        "changingRooms": "Changing Rooms",
+        "security": "Security",
+        "floodlights": "Floodlights"
+    },
+    "booking": {
+        "bookVenue": "Book Venue",
+        "selectDateTime": "Select Date & Time",
+        "selectDate": "Select Date",
+        "selectTime": "Select Time",
+        "duration": "Duration",
+        "hour": "hour",
+        "hours": "hours",
+        "priceSummary": "Price Summary",
+        "basePrice": "Base Price",
+        "total": "Total",
+        "confirmBooking": "Confirm Booking",
+        "bookingConfirmed": "Booking Confirmed!",
+        "bookingSuccess": "Your pitch has been booked successfully. Check your bookings for details.",
+        "chooseDate": "Choose Date",
+        "chooseTime": "Choose Time"
+    },
+    "tabs": {
+        "discover": "Discover",
+        "bookings": "Bookings",
+        "profile": "Profile"
+    }
+}
