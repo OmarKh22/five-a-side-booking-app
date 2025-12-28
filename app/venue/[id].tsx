@@ -3,10 +3,11 @@ import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
     MapPin, Wifi, Car, Star, Clock, CheckCircle,
-    ArrowLeft, Sparkles, Users, Shield, Zap, Calendar
+    ArrowLeft, Sparkles, Users, Shield, Zap, Calendar, ExternalLink
 } from "lucide-react-native";
 import { Button } from "../../components/ui/Button";
 import { useTranslation } from "react-i18next";
+import MapView, { Marker } from "react-native-maps";
 
 const { width } = Dimensions.get('window');
 
@@ -37,6 +38,10 @@ const VENUE_DETAILS: Record<string, any> = {
             { icon: Shield, label: "Security", available: true },
             { icon: Zap, label: "Floodlights", available: true },
         ],
+        coordinates: {
+            latitude: 40.7128,
+            longitude: -74.0060,
+        },
         openingHours: "Mon-Sun: 06:00 - 23:00",
     },
     "2": {
@@ -60,6 +65,10 @@ const VENUE_DETAILS: Record<string, any> = {
             { icon: CheckCircle, label: "Showers", available: true },
             { icon: Users, label: "Changing Rooms", available: true },
         ],
+        coordinates: {
+            latitude: 40.7282,
+            longitude: -73.9942,
+        },
         openingHours: "Mon-Sun: 07:00 - 22:00",
     },
     "3": {
@@ -82,6 +91,10 @@ const VENUE_DETAILS: Record<string, any> = {
             { icon: Car, label: "Parking", available: true },
             { icon: CheckCircle, label: "Showers", available: false },
         ],
+        coordinates: {
+            latitude: 40.7042,
+            longitude: -74.0125,
+        },
         openingHours: "Mon-Sun: 08:00 - 22:00",
     },
     "4": {
@@ -103,6 +116,10 @@ const VENUE_DETAILS: Record<string, any> = {
             { icon: Car, label: "Parking", available: true },
             { icon: Users, label: "Changing Rooms", available: false },
         ],
+        coordinates: {
+            latitude: 40.7589,
+            longitude: -73.9851,
+        },
         openingHours: "Mon-Fri: 16:00 - 21:00, Sat-Sun: 08:00 - 20:00",
     },
     "5": {
@@ -125,6 +142,10 @@ const VENUE_DETAILS: Record<string, any> = {
             { icon: Zap, label: "Floodlights", available: true },
             { icon: Shield, label: "Security", available: true },
         ],
+        coordinates: {
+            latitude: 40.7484,
+            longitude: -73.9857,
+        },
         openingHours: "Mon-Sun: 06:00 - 23:00",
     },
     default: {
@@ -136,6 +157,10 @@ const VENUE_DETAILS: Record<string, any> = {
         type: "Standard",
         image: "",
         facilities: [],
+        coordinates: {
+            latitude: 40.7128,
+            longitude: -74.0060,
+        },
     },
 };
 
@@ -315,9 +340,26 @@ export default function VenueDetailsScreen() {
                                 <Text className="text-blue-600 font-semibold text-xs">{t('venue.getDirections')}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View className="bg-slate-100 h-40 rounded-2xl items-center justify-center">
-                            <MapPin size={32} color="#94a3b8" />
-                            <Text className="text-slate-400 text-sm mt-2">{t('venue.mapView')}</Text>
+                        <View className="bg-slate-100 h-48 rounded-2xl overflow-hidden mt-3 border border-slate-200">
+                            <MapView
+                                style={{ width: '100%', height: '100%' }}
+                                initialRegion={{
+                                    latitude: venue.coordinates.latitude,
+                                    longitude: venue.coordinates.longitude,
+                                    latitudeDelta: 0.01,
+                                    longitudeDelta: 0.01,
+                                }}
+                            >
+                                <Marker
+                                    coordinate={venue.coordinates}
+                                    title={venue.name}
+                                    description={venue.address}
+                                >
+                                    <View className="bg-blue-600 p-2 rounded-full border-2 border-white shadow-lg">
+                                        <MapPin size={20} color="white" />
+                                    </View>
+                                </Marker>
+                            </MapView>
                         </View>
                     </View>
                 </View>
