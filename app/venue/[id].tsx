@@ -39,8 +39,8 @@ const VENUE_DETAILS: Record<string, any> = {
             { icon: Zap, label: "Floodlights", available: true },
         ],
         coordinates: {
-            latitude: 40.7128,
-            longitude: -74.0060,
+            latitude:  30.0444,
+            longitude: 31.2357,
         },
         openingHours: "Mon-Sun: 06:00 - 23:00",
     },
@@ -66,8 +66,8 @@ const VENUE_DETAILS: Record<string, any> = {
             { icon: Users, label: "Changing Rooms", available: true },
         ],
         coordinates: {
-            latitude: 40.7282,
-            longitude: -73.9942,
+            latitude: 31.2001,
+            longitude: 29.9187,
         },
         openingHours: "Mon-Sun: 07:00 - 22:00",
     },
@@ -92,8 +92,8 @@ const VENUE_DETAILS: Record<string, any> = {
             { icon: CheckCircle, label: "Showers", available: false },
         ],
         coordinates: {
-            latitude: 40.7042,
-            longitude: -74.0125,
+            latitude: 31.0341,
+            longitude: 30.4682,
         },
         openingHours: "Mon-Sun: 08:00 - 22:00",
     },
@@ -117,8 +117,8 @@ const VENUE_DETAILS: Record<string, any> = {
             { icon: Users, label: "Changing Rooms", available: false },
         ],
         coordinates: {
-            latitude: 40.7589,
-            longitude: -73.9851,
+            latitude: 30.0131,
+            longitude: 31.2089,
         },
         openingHours: "Mon-Fri: 16:00 - 21:00, Sat-Sun: 08:00 - 20:00",
     },
@@ -143,8 +143,8 @@ const VENUE_DETAILS: Record<string, any> = {
             { icon: Shield, label: "Security", available: true },
         ],
         coordinates: {
-            latitude: 40.7484,
-            longitude: -73.9857,
+            latitude: 31.2653,
+            longitude:  32.3019,
         },
         openingHours: "Mon-Sun: 06:00 - 23:00",
     },
@@ -340,7 +340,7 @@ export default function VenueDetailsScreen() {
                                 <Text className="text-blue-600 font-semibold text-xs">{t('venue.getDirections')}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View className="bg-slate-100 h-48 rounded-2xl overflow-hidden mt-3 border border-slate-200">
+                        <View className="bg-slate-100 h-64 rounded-2xl overflow-hidden mt-3 border border-slate-200">
                             <MapView
                                 style={{ width: '100%', height: '100%' }}
                                 initialRegion={{
