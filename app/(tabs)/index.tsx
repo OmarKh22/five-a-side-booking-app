@@ -5,6 +5,7 @@ import { MapPin, Search, SlidersHorizontal, Star, TrendingUp, Sparkles, ArrowRig
 import { Input } from "../../components/ui/Input";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useAuthStore } from "../../store/authStore";
 
 const FEATURED_VENUES = [
     {
@@ -68,6 +69,7 @@ export default function DiscoveryScreen() {
     const insets = useSafeAreaInsets();
     const [selectedCategory, setSelectedCategory] = useState('all');
     const { t } = useTranslation();
+    const { user } = useAuthStore();
 
     return (
         <View className="flex-1 bg-slate-50">
@@ -79,7 +81,7 @@ export default function DiscoveryScreen() {
                 <View className="px-5 pb-6 pt-2">
                     <View className="flex-row items-center justify-between mb-6">
                         <View>
-                            <Text className="text-blue-100 text-sm font-medium">{t('auth.appName')}</Text>
+                            <Text className="text-blue-100 text-sm font-medium">{t('welcome')}, {user?.user_metadata?.full_name || 'Guest'}</Text>
                             <Text className="text-white text-3xl font-extrabold mt-0.5">{t('tabs.discover')}</Text>
                         </View>
                         <TouchableOpacity className="bg-white/20 backdrop-blur-xl p-3 rounded-full">
@@ -118,8 +120,8 @@ export default function DiscoveryScreen() {
                                 key={cat.id}
                                 // onPress={() => setSelectedCategory(cat.id)}
                                 className={`px-5 py-3 rounded-2xl mr-3 border-2 ${selectedCategory === cat.id
-                                        ? 'bg-blue-600 border-blue-600 shadow-lg shadow-blue-200'
-                                        : 'bg-white border-slate-100'
+                                    ? 'bg-blue-600 border-blue-600 shadow-lg shadow-blue-200'
+                                    : 'bg-white border-slate-100'
                                     }`}
                             >
                                 <View className="flex-row items-center">

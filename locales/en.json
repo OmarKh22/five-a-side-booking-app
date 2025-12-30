@@ -1,5 +1,6 @@
 {
     "common": {
+        "welcome": "Welcome",
         "cancel": "Cancel",
         "confirm": "Confirm",
         "save": "Save",
