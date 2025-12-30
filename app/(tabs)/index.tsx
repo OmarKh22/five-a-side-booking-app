@@ -81,8 +81,8 @@ export default function DiscoveryScreen() {
                 <View className="px-5 pb-6 pt-2">
                     <View className="flex-row items-center justify-between mb-6">
                         <View>
-                            <Text className="text-blue-100 text-sm font-medium">{t('welcome')}, {user?.user_metadata?.full_name || 'Guest'}</Text>
-                            <Text className="text-white text-3xl font-extrabold mt-0.5">{t('tabs.discover')}</Text>
+                            <Text className="text-blue-100 text-xl font-extrabold">{t('welcome')}, {user?.user_metadata?.full_name || 'Guest'}</Text>
+                            {/* <Text className="text-white text-3xl font-extrabold mt-0.5">{t('tabs.discover')}</Text> */}
                         </View>
                         <TouchableOpacity className="bg-white/20 backdrop-blur-xl p-3 rounded-full">
                             <SlidersHorizontal size={22} color="white" />
