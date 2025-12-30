@@ -1,25 +1,50 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useBookingStore } from "../../store/bookingStore";
+import { supabase } from "../../lib/supabase";
+import { useState } from "react";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { useTranslation } from "react-i18next";
 
 export default function SignUpScreen() {
     const router = useRouter();
-    const login = useBookingStore((state) => state.login);
     const { t } = useTranslation();
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSignUp = () => {
-        // Mock sign up
-        login({
-            id: '1',
-            name: 'New User',
-            email: 'new@example.com',
-            role: 'player'
+    const handleSignUp = async () => {
+        if (!name || !email || !password || !confirmPassword) {
+            Alert.alert("Error", "Please fill in all fields");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            Alert.alert("Error", "Passwords do not match");
+            return;
+        }
+
+        setLoading(true);
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    full_name: name,
+                }
+            }
         });
-        router.replace('/(tabs)');
+
+        if (error) {
+            Alert.alert("Error", error.message);
+        } else {
+            Alert.alert("Success", "Account created! Please sign in.");
+            router.replace('/(auth)/login');
+        }
+        setLoading(false);
     };
 
     return (
@@ -30,13 +55,33 @@ export default function SignUpScreen() {
             </View>
 
             <View className="space-y-4 w-full">
-                <Input placeholder={t('auth.fullName')} />
-                <Input placeholder={t('auth.email')} keyboardType="email-address" />
-                <Input placeholder={t('auth.password')} secureTextEntry />
-                <Input placeholder={t('auth.confirmPassword')} secureTextEntry />
+                <Input
+                    placeholder={t('auth.fullName')}
+                    value={name}
+                    onChangeText={setName}
+                />
+                <Input
+                    placeholder={t('auth.email')}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    value={email}
+                    onChangeText={setEmail}
+                />
+                <Input
+                    placeholder={t('auth.password')}
+                    secureTextEntry
+                    value={password}
+                    onChangeText={setPassword}
+                />
+                <Input
+                    placeholder={t('auth.confirmPassword')}
+                    secureTextEntry
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                />
 
-                <Button onPress={handleSignUp} size="lg" className="mt-4">
-                    {t('auth.createAccount')}
+                <Button onPress={handleSignUp} size="lg" className="mt-4" disabled={loading}>
+                    {loading ? "Creating Account..." : t('auth.createAccount')}
                 </Button>
 
                 <View className="flex-row justify-center mt-6">

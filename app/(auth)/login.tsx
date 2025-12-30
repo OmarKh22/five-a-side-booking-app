@@ -1,25 +1,37 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useBookingStore } from "../../store/bookingStore";
+import { supabase } from "../../lib/supabase";
+import { useState } from "react";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { useTranslation } from "react-i18next";
 
 export default function LoginScreen() {
     const router = useRouter();
-    const login = useBookingStore((state) => state.login);
     const { t } = useTranslation();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = () => {
-        // Mock login
-        login({
-            id: '1',
-            name: 'John Doe',
-            email: 'john@example.com',
-            role: 'player'
+    const handleLogin = async () => {
+        if (!email || !password) {
+            Alert.alert("Error", "Please fill in all fields");
+            return;
+        }
+
+        setLoading(true);
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
         });
-        router.replace('/(tabs)');
+
+        if (error) {
+            Alert.alert("Error", error.message);
+        } else {
+            router.replace('/(tabs)');
+        }
+        setLoading(false);
     };
 
     return (
@@ -30,15 +42,26 @@ export default function LoginScreen() {
             </View>
 
             <View className="space-y-4 w-full">
-                <Input placeholder={t('auth.email')} keyboardType="email-address" />
-                <Input placeholder={t('auth.password')} secureTextEntry />
+                <Input
+                    placeholder={t('auth.email')}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    value={email}
+                    onChangeText={setEmail}
+                />
+                <Input
+                    placeholder={t('auth.password')}
+                    secureTextEntry
+                    value={password}
+                    onChangeText={setPassword}
+                />
 
                 <TouchableOpacity className="items-end">
                     <Text className="text-blue-600 font-medium">{t('auth.forgotPassword')}</Text>
                 </TouchableOpacity>
 
-                <Button onPress={handleLogin} size="lg" className="mt-4">
-                    {t('auth.signIn')}
+                <Button onPress={handleLogin} size="lg" className="mt-4" disabled={loading}>
+                    {loading ? "Signing in..." : t('auth.signIn')}
                 </Button>
 
                 <View className="flex-row justify-center mt-6">

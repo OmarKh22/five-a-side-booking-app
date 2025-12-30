@@ -1,14 +1,14 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { useBookingStore } from "../../store/bookingStore";
+import { useAuthStore } from "../../store/authStore";
 import { User, CreditCard, Settings, LogOut, ChevronRight, Globe } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function ProfileScreen() {
     const router = useRouter();
-    const { user, logout } = useBookingStore();
+    const { user, signOut } = useAuthStore();
     const { t } = useTranslation();
     const { language, setLanguage } = useLanguage();
 
@@ -18,8 +18,8 @@ export default function ProfileScreen() {
             {
                 text: t('auth.signOut'),
                 style: "destructive",
-                onPress: () => {
-                    logout();
+                onPress: async () => {
+                    await signOut();
                     router.replace('/(auth)/login');
                 }
             }
@@ -53,11 +53,11 @@ export default function ProfileScreen() {
             <View className="items-center mb-8">
                 <View className="w-24 h-24 bg-blue-100 rounded-full items-center justify-center mb-4 border-4 border-white shadow-sm">
                     <Text className="text-3xl text-blue-600 font-bold">
-                        {user?.name?.[0] || "U"}
+                        {user?.user_metadata?.full_name?.[0] || user?.email?.[0] || "U"}
                     </Text>
                 </View>
-                <Text className="text-xl font-bold text-gray-900">{user?.name || t('profile.guestUser')}</Text>
-                <Text className="text-gray-500">{user?.email || "guest@example.com"}</Text>
+                <Text className="text-xl font-bold text-gray-900">{user?.user_metadata?.full_name || t('profile.guestUser')}</Text>
+                <Text className="text-gray-500">{user?.email || ""}</Text>
             </View>
 
             <View className="bg-white rounded-xl overflow-hidden border border-gray-100">

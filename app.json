@@ -3,6 +3,7 @@
     "name": "five-a-side-booking",
     "slug": "five-a-side-booking",
     "version": "1.0.0",
+    "scheme": "fiveaside",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

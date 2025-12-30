@@ -4,8 +4,16 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
 import { LanguageProvider } from "../contexts/LanguageContext";
+import { useAuthStore } from "../store/authStore";
+import { useEffect } from "react";
 
 export default function Layout() {
+    const initialize = useAuthStore((state) => state.initialize);
+
+    useEffect(() => {
+        initialize();
+    }, [initialize]);
+
     return (
         <LanguageProvider>
             <View className="flex-1">
