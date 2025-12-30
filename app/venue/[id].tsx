@@ -9,6 +9,7 @@ import { Button } from "../../components/ui/Button";
 import { useTranslation } from "react-i18next";
 import MapView, { Marker } from "react-native-maps";
 import { useVenueStore, Venue } from "../../store/venueStore";
+import { useLanguage } from "../../contexts/LanguageContext";
 import { useEffect, useState } from "react";
 
 const { width } = Dimensions.get('window');
@@ -20,7 +21,7 @@ export default function VenueDetailsScreen() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const { t } = useTranslation();
+    const { t, language } = useLanguage();
     const { venues } = useVenueStore();
 
     // Find venue from store or use default
@@ -55,7 +56,10 @@ export default function VenueDetailsScreen() {
         surface: "Unknown",
         capacity: "0 players",
         distance: "N/A",
-        gallery: []
+        gallery: [],
+        name_ar: "",
+        description_ar: "",
+        address_ar: ""
     };
 
     if (!venue) return null; // Should not happen with default logic
@@ -71,6 +75,10 @@ export default function VenueDetailsScreen() {
         if (label.includes("Floodlight")) return Zap;
         return CheckCircle;
     };
+
+    const displayName = language === 'ar' && venue.name_ar ? venue.name_ar : venue.name;
+    const displayAddress = language === 'ar' && venue.address_ar ? venue.address_ar : venue.address;
+    const displayDescription = language === 'ar' && venue.description_ar ? venue.description_ar : venue.description;
 
 
     return (
@@ -109,12 +117,12 @@ export default function VenueDetailsScreen() {
                         <View className="flex-row items-start justify-between mb-3">
                             <View className="flex-1 mr-4">
                                 <Text className="text-slate-900 font-extrabold text-2xl leading-tight mb-2">
-                                    {venue.name}
+                                    {displayName}
                                 </Text>
                                 <View className="flex-row items-center mb-1">
                                     <MapPin size={14} color="#64748b" />
                                     <Text className="text-slate-500 text-sm ml-1.5 font-medium flex-1" numberOfLines={1}>
-                                        {venue.address}
+                                        {displayAddress}
                                     </Text>
                                 </View>
                                 <Text className="text-blue-600 text-sm font-semibold">
@@ -202,7 +210,7 @@ export default function VenueDetailsScreen() {
                     <View className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
                         <Text className="text-slate-900 font-bold text-lg mb-3">{t('venue.about')}</Text>
                         <Text className="text-slate-600 leading-6 mb-4">
-                            {venue.description}
+                            {displayDescription}
                         </Text>
                         <View className="bg-blue-50 p-3 rounded-xl flex-row items-center border border-blue-100">
                             <Clock size={16} color="#2563eb" />
@@ -258,8 +266,8 @@ export default function VenueDetailsScreen() {
                                 {venue.coordinates && (
                                     <Marker
                                         coordinate={venue.coordinates}
-                                        title={venue.name}
-                                        description={venue.address}
+                                        title={displayName}
+                                        description={displayAddress}
                                     >
                                         <View className="bg-blue-600 p-2 rounded-full border-2 border-white shadow-lg">
                                             <MapPin size={20} color="white" />

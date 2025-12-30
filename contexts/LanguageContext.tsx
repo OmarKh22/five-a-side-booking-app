@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { I18nManager } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import i18n from '../lib/i18n';
 
 type Language = 'en' | 'ar';
@@ -8,6 +9,7 @@ interface LanguageContextType {
     language: Language;
     setLanguage: (lang: Language) => void;
     isRTL: boolean;
+    t: (key: string, options?: any) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -17,6 +19,8 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
+    const { t } = useTranslation();
+
     // Safely get the initial language, default to 'en' if i18n.language is undefined or invalid
     const getInitialLanguage = (): Language => {
         const lang = i18n.language;
@@ -54,7 +58,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     };
 
     return (
-        <LanguageContext.Provider value={{ language, setLanguage, isRTL }}>
+        <LanguageContext.Provider value={{ language, setLanguage, isRTL, t }}>
             {children}
         </LanguageContext.Provider>
     );

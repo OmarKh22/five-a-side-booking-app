@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../store/authStore";
 import { useVenueStore } from "../../store/venueStore";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 // Categories remain static for now
 const CATEGORIES = [
@@ -17,10 +18,15 @@ const CATEGORIES = [
     { id: 'turf', nameKey: 'turf', icon: '⚡' }
 ];
 
+// Helper for localization
+const getLocalizedValue = (en: string, ar: string | undefined, language: string) => {
+    return language === 'ar' && ar ? ar : en;
+};
+
 export default function DiscoveryScreen() {
     const insets = useSafeAreaInsets();
     const [selectedCategory, setSelectedCategory] = useState('all');
-    const { t } = useTranslation();
+    const { t, language } = useLanguage();
     const { user } = useAuthStore();
     const { venues, loading, fetchVenues } = useVenueStore();
 
@@ -47,7 +53,7 @@ export default function DiscoveryScreen() {
                 <View className="px-5 pb-6 pt-2">
                     <View className="flex-row items-center justify-between mb-6">
                         <View>
-                            <Text className="text-blue-100 text-xl font-extrabold">{t('welcome')}, {user?.user_metadata?.full_name || 'Guest'}</Text>
+                            <Text className="text-blue-100 text-xl font-extrabold">{t('common.welcome')}, {user?.user_metadata?.full_name || 'Guest'}</Text>
                             {/* <Text className="text-white text-3xl font-extrabold mt-0.5">{t('tabs.discover')}</Text> */}
                         </View>
                         <TouchableOpacity className="bg-white/20 backdrop-blur-xl p-3 rounded-full">
@@ -153,12 +159,12 @@ export default function DiscoveryScreen() {
                                         {/* Bottom Info */}
                                         <View className="absolute bottom-4 left-4 right-4">
                                             <Text className="text-white font-bold text-xl mb-1">
-                                                {venue.name}
+                                                {getLocalizedValue(venue.name, venue.name_ar, language)}
                                             </Text>
                                             <View className="flex-row items-center">
                                                 <MapPin size={14} color="rgba(255,255,255,0.9)" />
                                                 <Text className="text-white/90 ml-1.5 text-sm font-medium">
-                                                    {venue.distance}
+                                                    {getLocalizedValue(venue.address, venue.address_ar, language)} | {venue.distance}
                                                 </Text>
                                             </View>
                                         </View>
@@ -220,12 +226,12 @@ export default function DiscoveryScreen() {
                                                 className="text-slate-900 font-bold text-base leading-tight mb-2"
                                                 numberOfLines={1}
                                             >
-                                                {venue.name}
+                                                {getLocalizedValue(venue.name, venue.name_ar, language)}
                                             </Text>
                                             <View className="flex-row items-center">
                                                 <MapPin size={14} color="#94a3b8" />
                                                 <Text className="text-slate-500 text-sm ml-1 font-medium">
-                                                    {venue.distance}
+                                                    {getLocalizedValue(venue.address, venue.address_ar, language)} | {venue.distance}
                                                 </Text>
                                             </View>
                                         </View>
