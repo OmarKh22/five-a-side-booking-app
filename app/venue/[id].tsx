@@ -8,147 +8,36 @@ import {
 import { Button } from "../../components/ui/Button";
 import { useTranslation } from "react-i18next";
 import MapView, { Marker } from "react-native-maps";
+import { useVenueStore, Venue } from "../../store/venueStore";
+import { useEffect, useState } from "react";
 
 const { width } = Dimensions.get('window');
 
-// Mock data - Enhanced
-const VENUE_DETAILS: Record<string, any> = {
-    "1": {
-        name: "Downtown Arena",
-        description: "Premier 5-a-side facility with floodlights and changing rooms. Experience world-class playing conditions with our state-of-the-art artificial turf, professional lighting system, and modern amenities. Perfect for competitive matches and casual games alike.",
-        rating: 4.8,
-        reviews: 234,
-        price: "$50",
-        type: "Premium",
+// Mock data removed in favor of Supabase data
+
+
+export default function VenueDetailsScreen() {
+    const { id } = useLocalSearchParams();
+    const router = useRouter();
+    const insets = useSafeAreaInsets();
+    const { t } = useTranslation();
+    const { venues } = useVenueStore();
+
+    // Find venue from store or use default
+    const foundVenue = venues.find(v => v.id.toString() === id);
+
+    const venue = foundVenue ? {
+        ...foundVenue,
+        coordinates: {
+            latitude: foundVenue.latitude,
+            longitude: foundVenue.longitude
+        },
+        // Defaults for fields not yet in DB
+        gallery: [foundVenue.image],
+        openingHours: "Mon-Sun: 08:00 - 23:00",
         surface: "Artificial Turf",
-        capacity: "10 players",
-        address: "123 Football St, City Center",
-        distance: "1.2 km away",
-        image: "https://as1.ftcdn.net/jpg/02/23/57/72/1000_F_223577247_DIyymsYzlK5U6Bu3T3ZJWauaVboyU2rY.jpg",
-        gallery: [
-            "https://as1.ftcdn.net/jpg/02/23/57/72/1000_F_223577247_DIyymsYzlK5U6Bu3T3ZJWauaVboyU2rY.jpg",
-            "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?q=80&w=600&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=600&auto=format&fit=crop",
-        ],
-        facilities: [
-            { icon: Wifi, label: "Free WiFi", available: true },
-            { icon: Car, label: "Parking", available: true },
-            { icon: CheckCircle, label: "Showers", available: true },
-            { icon: Users, label: "Changing Rooms", available: true },
-            { icon: Shield, label: "Security", available: true },
-            { icon: Zap, label: "Floodlights", available: true },
-        ],
-        coordinates: {
-            latitude:  30.0444,
-            longitude: 31.2357,
-        },
-        openingHours: "Mon-Sun: 06:00 - 23:00",
-    },
-    "2": {
-        name: "Westside Keepers",
-        description: "Modern indoor facility with climate control and professional-grade equipment. Perfect for year-round play.",
-        rating: 4.5,
-        reviews: 187,
-        price: "$45",
-        type: "Popular",
-        surface: "Indoor Court",
-        capacity: "8 players",
-        address: "456 Sports Ave, West District",
-        distance: "2.1 km away",
-        image: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?q=80&w=600&auto=format&fit=crop",
-        gallery: [
-            "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?q=80&w=600&auto=format&fit=crop",
-        ],
-        facilities: [
-            { icon: Wifi, label: "Free WiFi", available: true },
-            { icon: Car, label: "Parking", available: true },
-            { icon: CheckCircle, label: "Showers", available: true },
-            { icon: Users, label: "Changing Rooms", available: true },
-        ],
-        coordinates: {
-            latitude: 31.2001,
-            longitude: 29.9187,
-        },
-        openingHours: "Mon-Sun: 07:00 - 22:00",
-    },
-    "3": {
-        name: "Community Center",
-        description: "Local community 5-a-side pitch with friendly vibe and good accessibility. Ideal for casual matches and training sessions.",
-        rating: 4.3,
-        reviews: 58,
-        price: "$40",
-        type: "Community",
-        surface: "Artificial Turf",
-        capacity: "10 players",
-        address: "789 Local Rd, Near Park",
-        distance: "0.8 km away",
-        image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=600&auto=format&fit=crop",
-        gallery: [
-            "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=600&auto=format&fit=crop",
-        ],
-        facilities: [
-            { icon: Wifi, label: "Free WiFi", available: true },
-            { icon: Car, label: "Parking", available: true },
-            { icon: CheckCircle, label: "Showers", available: false },
-        ],
-        coordinates: {
-            latitude: 31.0341,
-            longitude: 30.4682,
-        },
-        openingHours: "Mon-Sun: 08:00 - 22:00",
-    },
-    "4": {
-        name: "School Grounds",
-        description: "Well-maintained school pitch available for community bookings in the evenings and weekends.",
-        rating: 4.1,
-        reviews: 34,
-        price: "$30",
-        type: "Budget",
-        surface: "Grass",
-        capacity: "10 players",
-        address: "12 School Ln, Suburbia",
-        distance: "1.2 km away",
-        image: "https://images.unsplash.com/photo-1624880357913-a8539238245b?q=80&w=600&auto=format&fit=crop",
-        gallery: [
-            "https://images.unsplash.com/photo-1624880357913-a8539238245b?q=80&w=600&auto=format&fit=crop",
-        ],
-        facilities: [
-            { icon: Car, label: "Parking", available: true },
-            { icon: Users, label: "Changing Rooms", available: false },
-        ],
-        coordinates: {
-            latitude: 30.0131,
-            longitude: 31.2089,
-        },
-        openingHours: "Mon-Fri: 16:00 - 21:00, Sat-Sun: 08:00 - 20:00",
-    },
-    "5": {
-        name: "Rooftop Pitch",
-        description: "Exclusive rooftop pitch with panoramic city views and premium surface — great for special events and private bookings.",
-        rating: 4.7,
-        reviews: 92,
-        price: "$60",
-        type: "Premium",
-        surface: "Synthetic Turf",
-        capacity: "10 players",
-        address: "45 Skyline Ave, Downtown",
-        distance: "2.5 km away",
-        image: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=600&auto=format&fit=crop",
-        gallery: [
-            "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=600&auto=format&fit=crop",
-        ],
-        facilities: [
-            { icon: Wifi, label: "Free WiFi", available: true },
-            { icon: Zap, label: "Floodlights", available: true },
-            { icon: Shield, label: "Security", available: true },
-        ],
-        coordinates: {
-            latitude: 31.2653,
-            longitude:  32.3019,
-        },
-        openingHours: "Mon-Sun: 06:00 - 23:00",
-    },
-    default: {
+        capacity: "10 players"
+    } : {
         name: "Unknown Venue",
         description: "Information not available",
         rating: 0,
@@ -157,19 +46,32 @@ const VENUE_DETAILS: Record<string, any> = {
         type: "Standard",
         image: "",
         facilities: [],
+        address: "N/A",
         coordinates: {
             latitude: 40.7128,
             longitude: -74.0060,
         },
-    },
-};
+        openingHours: "Mon-Sun: 08:00 - 22:00",
+        surface: "Unknown",
+        capacity: "0 players",
+        distance: "N/A",
+        gallery: []
+    };
 
-export default function VenueDetailsScreen() {
-    const { id } = useLocalSearchParams();
-    const router = useRouter();
-    const insets = useSafeAreaInsets();
-    const { t } = useTranslation();
-    const venue = (VENUE_DETAILS as Record<string, any>)[id as string] || VENUE_DETAILS["default"];
+    if (!venue) return null; // Should not happen with default logic
+
+    // Helper to get icon for facility label checks
+    const getIcon = (label: string) => {
+        if (!label) return CheckCircle;
+        if (label.includes("Wifi")) return Wifi;
+        if (label.includes("Parking")) return Car;
+        if (label.includes("Shower")) return CheckCircle;
+        if (label.includes("Changing")) return Users;
+        if (label.includes("Security")) return Shield;
+        if (label.includes("Floodlight")) return Zap;
+        return CheckCircle;
+    };
+
 
     return (
         <View className="flex-1 bg-slate-50">
@@ -316,17 +218,20 @@ export default function VenueDetailsScreen() {
                     <View className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
                         <Text className="text-slate-900 font-bold text-lg mb-4">{t('venue.facilities')}</Text>
                         <View className="flex-row flex-wrap gap-3">
-                            {venue.facilities.map((item: any, index: number) => (
-                                <View
-                                    key={index}
-                                    className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 flex-row items-center"
-                                >
-                                    <View className="bg-white p-2 rounded-lg mr-3">
-                                        <item.icon size={18} color="#2563eb" />
+                            {venue.facilities && venue.facilities.map((item: any, index: number) => {
+                                const Icon = getIcon(item.label);
+                                return (
+                                    <View
+                                        key={index}
+                                        className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 flex-row items-center"
+                                    >
+                                        <View className="bg-white p-2 rounded-lg mr-3">
+                                            <Icon size={18} color="#2563eb" />
+                                        </View>
+                                        <Text className="text-slate-700 font-semibold text-sm">{item.label}</Text>
                                     </View>
-                                    <Text className="text-slate-700 font-semibold text-sm">{item.label}</Text>
-                                </View>
-                            ))}
+                                )
+                            })}
                         </View>
                     </View>
                 </View>
@@ -344,21 +249,23 @@ export default function VenueDetailsScreen() {
                             <MapView
                                 style={{ width: '100%', height: '100%' }}
                                 initialRegion={{
-                                    latitude: venue.coordinates.latitude,
-                                    longitude: venue.coordinates.longitude,
+                                    latitude: venue.coordinates?.latitude || 40.7128,
+                                    longitude: venue.coordinates?.longitude || -74.0060,
                                     latitudeDelta: 0.01,
                                     longitudeDelta: 0.01,
                                 }}
                             >
-                                <Marker
-                                    coordinate={venue.coordinates}
-                                    title={venue.name}
-                                    description={venue.address}
-                                >
-                                    <View className="bg-blue-600 p-2 rounded-full border-2 border-white shadow-lg">
-                                        <MapPin size={20} color="white" />
-                                    </View>
-                                </Marker>
+                                {venue.coordinates && (
+                                    <Marker
+                                        coordinate={venue.coordinates}
+                                        title={venue.name}
+                                        description={venue.address}
+                                    >
+                                        <View className="bg-blue-600 p-2 rounded-full border-2 border-white shadow-lg">
+                                            <MapPin size={20} color="white" />
+                                        </View>
+                                    </Marker>
+                                )}
                             </MapView>
                         </View>
                     </View>

@@ -1,62 +1,14 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Link } from "expo-router";
-import { MapPin, Search, SlidersHorizontal, Star, TrendingUp, Sparkles, ArrowRight } from "lucide-react-native";
+import { MapPin, Search, SlidersHorizontal, Star, TrendingUp, Sparkles, ArrowRight, Loader } from "lucide-react-native";
 import { Input } from "../../components/ui/Input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../store/authStore";
+import { useVenueStore } from "../../store/venueStore";
 
-const FEATURED_VENUES = [
-    {
-        id: '1',
-        name: 'Downtown Arena',
-        rating: 4.8,
-        distance: '1.2 km',
-        price: '$50/hr',
-        image: 'https://as1.ftcdn.net/jpg/02/23/57/72/1000_F_223577247_DIyymsYzlK5U6Bu3T3ZJWauaVboyU2rY.jpg',
-        featured: true,
-        typeKey: 'premium'
-    },
-    {
-        id: '2',
-        name: 'Westside Keepers',
-        rating: 4.5,
-        distance: '2.1 km',
-        price: '$45/hr',
-        image: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?q=80&w=600&auto=format&fit=crop',
-        featured: true,
-        typeKey: 'popular'
-    },
-];
-
-const NEARBY_VENUES = [
-    {
-        id: '3',
-        name: 'Community Center',
-        distance: '0.8 km',
-        price: '$40/hr',
-        rating: 4.3,
-        image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=600&auto=format&fit=crop'
-    },
-    {
-        id: '4',
-        name: 'School Grounds',
-        distance: '1.2 km',
-        price: '$30/hr',
-        rating: 4.1,
-        image: 'https://images.unsplash.com/photo-1624880357913-a8539238245b?q=80&w=600&auto=format&fit=crop'
-    },
-    {
-        id: '5',
-        name: 'Rooftop Pitch',
-        distance: '2.5 km',
-        price: '$60/hr',
-        rating: 4.7,
-        image: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=600&auto=format&fit=crop'
-    },
-];
-
+// Categories remain static for now
 const CATEGORIES = [
     { id: 'all', nameKey: 'all', icon: '🏟️' },
     { id: 'indoor', nameKey: 'indoor', icon: '🏢' },
@@ -70,6 +22,20 @@ export default function DiscoveryScreen() {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const { t } = useTranslation();
     const { user } = useAuthStore();
+    const { venues, loading, fetchVenues } = useVenueStore();
+
+    useEffect(() => {
+        fetchVenues();
+    }, [fetchVenues]);
+
+    if (loading && venues.length === 0) {
+        return (
+            <View className="flex-1 bg-slate-50 justify-center items-center">
+                <Loader size={32} color="#2563eb" className="animate-spin" />
+                <Text className="text-slate-500 mt-4 font-medium">{t('common.loading')}</Text>
+            </View>
+        );
+    }
 
     return (
         <View className="flex-1 bg-slate-50">
@@ -156,7 +122,7 @@ export default function DiscoveryScreen() {
                         showsHorizontalScrollIndicator={false}
                         contentContainerStyle={{ paddingHorizontal: 20 }}
                     >
-                        {FEATURED_VENUES.map((venue) => (
+                        {venues.slice(0, 3).map((venue) => (
                             <Link href={`/venue/${venue.id}`} key={venue.id} asChild>
                                 <TouchableOpacity className="w-80 mr-4 bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 active:scale-95">
                                     {/* Image Section */}
@@ -173,7 +139,7 @@ export default function DiscoveryScreen() {
                                             <View className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
                                                 <Sparkles size={12} color="#2563eb" />
                                                 <Text className="text-slate-900 text-xs font-bold ml-1.5">
-                                                    {t(`discovery.${venue.typeKey}`)}
+                                                    {venue.type || 'Standard'}
                                                 </Text>
                                             </View>
                                             <View className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
@@ -225,7 +191,7 @@ export default function DiscoveryScreen() {
                         <Text className="text-xl font-bold text-slate-900 ml-2">{t('discovery.nearYou')}</Text>
                     </View>
 
-                    {NEARBY_VENUES.map((venue, index) => (
+                    {venues.map((venue, index) => (
                         <Link href={`/venue/${venue.id}`} key={venue.id} asChild>
                             <TouchableOpacity
                                 className="bg-white rounded-2xl mb-4 overflow-hidden border border-slate-100 shadow-sm active:scale-98"
