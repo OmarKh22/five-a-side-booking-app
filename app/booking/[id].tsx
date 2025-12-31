@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert, Platform } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Calendar, Clock, CreditCard, CheckCircle, ArrowLeft, Sparkles, Zap, MapPin, Loader } from "lucide-react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -12,13 +12,28 @@ export default function BookingScreen() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const { addBooking, loading } = useBookingStore();
+    const { addBooking, loading, fetchBookedSlots, bookedSlots } = useBookingStore();
     const { t } = useTranslation();
 
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+    const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [showTimePicker, setShowTimePicker] = useState(false);
+
+    // Fetch availability when date changes
+    useEffect(() => {
+        if (id) {
+            fetchBookedSlots(Number(id), selectedDate.toISOString().split('T')[0]);
+            setSelectedTimeSlot(null); // Reset selection
+        }
+    }, [selectedDate, id]);
+
+    // Generate slots from 10:00 AM to 11:00 PM
+    const TIME_SLOTS = Array.from({ length: 14 }, (_, i) => {
+        const hour = i + 10; // Start at 10
+        const period = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour > 12 ? hour - 12 : hour;
+        return `${displayHour.toString().padStart(2, '0')}:00 ${period}`;
+    });
 
     // Get minimum date (today)
     const minDate = new Date();
@@ -34,35 +49,20 @@ export default function BookingScreen() {
         }
     };
 
-    const handleTimeChange = (event: any, time?: Date) => {
-        setShowTimePicker(Platform.OS === 'ios');
-        if (time) {
-            setSelectedTime(time);
-        }
-    };
-
     const formatDate = (date: Date) => {
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
     };
 
-    const formatTime = (date: Date) => {
-        return date.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-        });
-    };
-
     const handleConfirmBooking = async () => {
-        if (!selectedTime) return;
+        if (!selectedTimeSlot) return;
 
         try {
             await addBooking({
                 venue_id: Number(id),
                 date: selectedDate.toISOString().split('T')[0],
-                time_slot: formatTime(selectedTime),
+                time_slot: selectedTimeSlot,
                 amount: 50,
                 // user_id will be handled by store
             });
@@ -158,51 +158,45 @@ export default function BookingScreen() {
                     )}
                 </View>
 
-                {/* Time Selection */}
+                {/* Time Selection Grid */}
                 <View className="px-5 pt-6">
                     <View className="flex-row items-center mb-4">
                         <Clock size={18} color="#2563eb" />
                         <Text className="text-slate-900 font-bold text-lg ml-2">{t('booking.selectTime')}</Text>
                     </View>
 
-                    <TouchableOpacity
-                        onPress={() => setShowTimePicker(true)}
-                        className={`bg-white rounded-2xl p-5 border-2 shadow-sm ${selectedTime ? 'border-blue-600' : 'border-slate-200'
-                            }`}
-                    >
-                        <View className="flex-row items-center justify-between">
-                            <View>
-                                <Text className="text-slate-500 text-sm mb-1">{t('booking.chooseTime')}</Text>
-                                <Text className="text-slate-900 font-bold text-lg">
-                                    {selectedTime ? formatTime(selectedTime) : t('booking.chooseTime')}
-                                </Text>
-                            </View>
-                            <View className={`p-3 rounded-full ${selectedTime ? 'bg-blue-50' : 'bg-slate-100'}`}>
-                                <Clock size={24} color={selectedTime ? "#2563eb" : "#94a3b8"} />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
+                    <View className="flex-row flex-wrap justify-between">
+                        {TIME_SLOTS.map((slot, index) => {
+                            const isBooked = bookedSlots.includes(slot);
+                            const isSelected = selectedTimeSlot === slot;
 
-                    {showTimePicker && (
-                        <View className="mt-4">
-                            <DateTimePicker
-                                value={selectedTime || new Date()}
-                                mode="time"
-                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                                onChange={handleTimeChange}
-                                minuteInterval={30}
-                                textColor="#1e293b"
-                            />
-                            {Platform.OS === 'ios' && (
+                            return (
                                 <TouchableOpacity
-                                    onPress={() => setShowTimePicker(false)}
-                                    className="bg-blue-600 py-3 rounded-xl mt-3"
+                                    key={slot}
+                                    onPress={() => !isBooked && setSelectedTimeSlot(slot)}
+                                    disabled={loading || isBooked}
+                                    className={`w-[31%] py-3 mb-3 rounded-xl border items-center justify-center ${isSelected
+                                        ? 'bg-blue-600 border-blue-600'
+                                        : isBooked
+                                            ? 'bg-slate-100 border-slate-200 opacity-50'
+                                            : 'bg-white border-slate-200 shadow-sm'
+                                        }`}
                                 >
-                                    <Text className="text-white font-bold text-center">{t('common.done')}</Text>
+                                    <Text className={`font-semibold text-sm ${isSelected
+                                        ? 'text-white'
+                                        : isBooked
+                                            ? 'text-slate-400'
+                                            : 'text-slate-700'
+                                        }`}>
+                                        {slot}
+                                    </Text>
+                                    {isBooked && (
+                                        <Text className="text-[10px] text-slate-400 mt-1 uppercase font-bold">Booked</Text>
+                                    )}
                                 </TouchableOpacity>
-                            )}
-                        </View>
-                    )}
+                            );
+                        })}
+                    </View>
                 </View>
 
                 {/* Price Breakdown Card */}
@@ -232,11 +226,11 @@ export default function BookingScreen() {
                 style={{ paddingBottom: Math.max(insets.bottom, 16) }}
             >
                 <View className="px-5 pt-4">
-                    {selectedTime ? (
+                    {selectedTimeSlot ? (
                         <View className="flex-row items-center justify-center mb-3 bg-green-50 py-2 rounded-full border border-green-100">
                             <CheckCircle size={16} color="#16a34a" />
                             <Text className="text-green-700 font-semibold text-sm ml-2">
-                                {formatDate(selectedDate)} at {formatTime(selectedTime)}
+                                {formatDate(selectedDate)} at {selectedTimeSlot}
                             </Text>
                         </View>
                     ) : (
@@ -250,8 +244,8 @@ export default function BookingScreen() {
                     <Button
                         size="lg"
                         onPress={handleConfirmBooking}
-                        disabled={!selectedTime}
-                        className={`w-full rounded-xl shadow-lg shadow-blue-200 ${!selectedTime ? 'opacity-50' : ''
+                        disabled={!selectedTimeSlot}
+                        className={`w-full rounded-xl shadow-lg shadow-blue-200 ${!selectedTimeSlot ? 'opacity-50' : ''
                             }`}
                     >
                         <View className="flex-row items-center justify-center">

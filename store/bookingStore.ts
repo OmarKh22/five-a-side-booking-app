@@ -20,7 +20,9 @@ interface BookingState {
     bookings: Booking[];
     loading: boolean;
     error: string | null;
+    bookedSlots: string[];
     fetchUserBookings: () => Promise<void>;
+    fetchBookedSlots: (venueId: number, date: string) => Promise<void>;
     addBooking: (booking: Omit<Booking, 'id' | 'created_at' | 'status' | 'user_id'>) => Promise<void>;
 }
 
@@ -28,6 +30,28 @@ export const useBookingStore = create<BookingState>((set, get) => ({
     bookings: [],
     loading: false,
     error: null,
+    bookedSlots: [],
+
+    fetchBookedSlots: async (venueId, date) => {
+        set({ loading: true, error: null });
+        try {
+            const { data, error } = await supabase
+                .from('bookings')
+                .select('time_slot')
+                .eq('venue_id', venueId)
+                .eq('date', date)
+                .neq('status', 'cancelled'); // Don't block cancelled slots
+
+            if (error) throw error;
+
+            const slots = data.map(b => b.time_slot);
+            set({ bookedSlots: slots, loading: false });
+        } catch (error: any) {
+            console.error('Error fetching slots:', error);
+            // Don't block UI on fetch error, just log it
+            set({ error: error.message, loading: false });
+        }
+    },
 
     fetchUserBookings: async () => {
         set({ loading: true, error: null });
