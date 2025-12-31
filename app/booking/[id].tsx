@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, Alert, Platform } from "react
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { Calendar, Clock, CreditCard, CheckCircle, ArrowLeft, Sparkles, Zap, MapPin } from "lucide-react-native";
+import { Calendar, Clock, CreditCard, CheckCircle, ArrowLeft, Sparkles, Zap, MapPin, Loader } from "lucide-react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Button } from "../../components/ui/Button";
 import { useBookingStore } from "../../store/bookingStore";
@@ -12,7 +12,7 @@ export default function BookingScreen() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const addBooking = useBookingStore(state => state.addBooking);
+    const { addBooking, loading } = useBookingStore();
     const { t } = useTranslation();
 
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -55,24 +55,27 @@ export default function BookingScreen() {
         });
     };
 
-    const handleConfirmBooking = () => {
+    const handleConfirmBooking = async () => {
         if (!selectedTime) return;
 
-        addBooking({
-            id: Math.random().toString(36).substring(7),
-            venueId: id as string,
-            venueName: 'Downtown Arena',
-            date: selectedDate.toISOString().split('T')[0],
-            time: formatTime(selectedTime),
-            price: 50,
-            status: 'confirmed'
-        });
+        try {
+            await addBooking({
+                venue_id: Number(id),
+                date: selectedDate.toISOString().split('T')[0],
+                time_slot: formatTime(selectedTime),
+                amount: 50,
+                // user_id will be handled by store
+            });
 
-        Alert.alert(
-            `🎉 ${t('booking.bookingConfirmed')}`,
-            t('booking.bookingSuccess'),
-            [{ text: t('common.done'), onPress: () => router.dismissAll() }]
-        );
+            Alert.alert(
+                `🎉 ${t('booking.bookingConfirmed')}`,
+                t('booking.bookingSuccess'),
+                [{ text: t('common.done'), onPress: () => router.dismissAll() }]
+            );
+        } catch (error: any) {
+            console.error("Booking failed:", error);
+            Alert.alert("Booking Failed", error.message || "An unknown error occurred.");
+        }
     };
 
     return (
@@ -252,10 +255,16 @@ export default function BookingScreen() {
                             }`}
                     >
                         <View className="flex-row items-center justify-center">
-                            <CreditCard size={20} color="white" />
-                            <Text className="text-white font-bold text-base ml-2">
-                                {t('booking.confirmBooking')} $50.00
-                            </Text>
+                            {loading ? (
+                                <Loader size={20} color="white" className="animate-spin" />
+                            ) : (
+                                <>
+                                    <CreditCard size={20} color="white" />
+                                    <Text className="text-white font-bold text-base ml-2">
+                                        {t('booking.confirmBooking')} $50.00
+                                    </Text>
+                                </>
+                            )}
                         </View>
                     </Button>
                 </View>
