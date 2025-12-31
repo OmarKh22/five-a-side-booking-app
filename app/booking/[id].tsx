@@ -6,14 +6,16 @@ import { Calendar, Clock, CreditCard, CheckCircle, ArrowLeft, Sparkles, Zap, Map
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Button } from "../../components/ui/Button";
 import { useBookingStore } from "../../store/bookingStore";
-import { useTranslation } from "react-i18next";
+import { useVenueStore } from "../../store/venueStore";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function BookingScreen() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const { addBooking, loading, fetchBookedSlots, bookedSlots } = useBookingStore();
-    const { t } = useTranslation();
+    const { getVenueById, selectedVenue } = useVenueStore();
+    const { t, language } = useLanguage();
 
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
@@ -22,6 +24,7 @@ export default function BookingScreen() {
     // Fetch availability when date changes
     useEffect(() => {
         if (id) {
+            getVenueById(id as string);
             fetchBookedSlots(Number(id), selectedDate.toISOString().split('T')[0]);
             setSelectedTimeSlot(null); // Reset selection
         }
@@ -98,10 +101,14 @@ export default function BookingScreen() {
                         </View>
                     </View>
                     <Text className="text-white/70 text-sm font-medium">{t('booking.bookVenue')}</Text>
-                    <Text className="text-white text-2xl font-bold mt-1">Downtown Arena</Text>
+                    <Text className="text-white text-2xl font-bold mt-1">
+                        {selectedVenue ? (language === 'ar' && selectedVenue.name_ar ? selectedVenue.name_ar : selectedVenue.name) : "Loading..."}
+                    </Text>
                     <View className="flex-row items-center mt-2 opacity-80">
                         <MapPin size={14} color="white" />
-                        <Text className="text-white text-sm ml-1.5">123 Football St, City Center</Text>
+                        <Text className="text-white text-sm ml-1.5">
+                            {selectedVenue ? (language === 'ar' && selectedVenue.address_ar ? selectedVenue.address_ar : selectedVenue.address) : "Loading..."}
+                        </Text>
                     </View>
                 </View>
             </View>

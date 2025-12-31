@@ -30,16 +30,20 @@ export function Button({ className, variant = 'default', size = 'default', child
             )}
             {...props}
         >
-            <Text className={cn(
-                "text-sm font-medium transition-colors",
-                {
-                    "text-white": variant === 'default',
-                    "text-gray-900": variant === 'outline',
-                    "text-gray-700": variant === 'ghost',
-                }
-            )}>
-                {children}
-            </Text>
+            {typeof children === 'string' || typeof children === 'number' ? (
+                <Text className={cn(
+                    "text-sm font-medium transition-colors",
+                    {
+                        "text-white": variant === 'default',
+                        "text-gray-900": variant === 'outline',
+                        "text-gray-700": variant === 'ghost',
+                    }
+                )}>
+                    {children}
+                </Text>
+            ) : (
+                children
+            )}
         </TouchableOpacity>
     );
 }

@@ -303,7 +303,10 @@ export default function VenueDetailsScreen() {
                     </View>
                     <Button
                         size="lg"
-                        onPress={() => router.push(`/booking/${id}`)}
+                        onPress={() => {
+                            const venueId = Array.isArray(id) ? id[0] : id;
+                            if (venueId) router.push(`/booking/${venueId}`);
+                        }}
                         className="w-full rounded-xl shadow-lg shadow-blue-200"
                     >
                         <View className="flex-row items-center justify-center">
