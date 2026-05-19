@@ -26,6 +26,7 @@ const getLocalizedValue = (en: string, ar: string | undefined, language: string)
 export default function DiscoveryScreen() {
     const insets = useSafeAreaInsets();
     const [selectedCategory, setSelectedCategory] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
     const { t, language } = useLanguage();
     const { user } = useAuthStore();
     const { venues, loading, fetchVenues } = useVenueStore();
@@ -33,6 +34,22 @@ export default function DiscoveryScreen() {
     useEffect(() => {
         fetchVenues();
     }, [fetchVenues]);
+
+    const filteredVenues = venues.filter(venue => {
+        const name = getLocalizedValue(venue.name, venue.name_ar, language).toLowerCase();
+        const desc = getLocalizedValue(venue.description || '', venue.description_ar || '', language).toLowerCase();
+        const address = getLocalizedValue(venue.address || '', venue.address_ar || '', language).toLowerCase();
+        const type = (venue.type || '').toLowerCase();
+
+        const matchesSearch = name.includes(searchQuery.toLowerCase()) || 
+                             desc.includes(searchQuery.toLowerCase()) || 
+                             address.includes(searchQuery.toLowerCase());
+                             
+        const matchesCategory = selectedCategory === 'all' || 
+                               type.includes(selectedCategory.toLowerCase());
+                               
+        return matchesSearch && matchesCategory;
+    });
 
     if (loading && venues.length === 0) {
         return (
@@ -67,6 +84,8 @@ export default function DiscoveryScreen() {
                             <Search size={20} color="#94a3b8" />
                         </View>
                         <Input
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
                             className="pl-12 h-14 bg-white border-0 rounded-2xl text-base shadow-lg shadow-blue-900/20"
                             placeholder={t('discovery.searchPlaceholder')}
                             placeholderTextColor="#94a3b8"
@@ -90,7 +109,7 @@ export default function DiscoveryScreen() {
                         {CATEGORIES.map((cat) => (
                             <TouchableOpacity
                                 key={cat.id}
-                                // onPress={() => setSelectedCategory(cat.id)}
+                                onPress={() => setSelectedCategory(cat.id)}
                                 className={`px-5 py-3 rounded-2xl mr-3 border-2 ${selectedCategory === cat.id
                                     ? 'bg-blue-600 border-blue-600 shadow-lg shadow-blue-200'
                                     : 'bg-white border-slate-100'
@@ -123,71 +142,81 @@ export default function DiscoveryScreen() {
                         </Link>
                     </View>
 
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{ paddingHorizontal: 20 }}
-                    >
-                        {venues.slice(0, 3).map((venue) => (
-                            <Link href={`/venue/${venue.id}`} key={venue.id} asChild>
-                                <TouchableOpacity className="w-80 mr-4 bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 active:scale-95">
-                                    {/* Image Section */}
-                                    <View className="relative h-48">
-                                        <Image
-                                            source={{ uri: venue.image }}
-                                            className="w-full h-full"
-                                            resizeMode="cover"
-                                        />
-                                        <View className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    {filteredVenues.length === 0 ? (
+                        <View className="px-5 mb-4">
+                            <View className="bg-white rounded-3xl p-8 border border-slate-100 items-center justify-center shadow-sm">
+                                <Text className="text-slate-400 font-bold text-center">
+                                    No featured venues match your search
+                                </Text>
+                            </View>
+                        </View>
+                    ) : (
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{ paddingHorizontal: 20 }}
+                        >
+                            {filteredVenues.slice(0, 3).map((venue) => (
+                                <Link href={`/venue/${venue.id}`} key={venue.id} asChild>
+                                    <TouchableOpacity className="w-80 mr-4 bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 active:scale-95">
+                                        {/* Image Section */}
+                                        <View className="relative h-48">
+                                            <Image
+                                                source={{ uri: venue.image }}
+                                                className="w-full h-full"
+                                                resizeMode="cover"
+                                            />
+                                            <View className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
-                                        {/* Top Badges */}
-                                        <View className="absolute top-4 left-4 right-4 flex-row justify-between">
-                                            <View className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
-                                                <Sparkles size={12} color="#2563eb" />
-                                                <Text className="text-slate-900 text-xs font-bold ml-1.5">
-                                                    {venue.type || 'Standard'}
+                                            {/* Top Badges */}
+                                            <View className="absolute top-4 left-4 right-4 flex-row justify-between">
+                                                <View className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
+                                                    <Sparkles size={12} color="#2563eb" />
+                                                    <Text className="text-slate-900 text-xs font-bold ml-1.5">
+                                                        {venue.type || 'Standard'}
+                                                    </Text>
+                                                </View>
+                                                <View className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
+                                                    <Star size={12} color="#fbbf24" fill="#fbbf24" />
+                                                    <Text className="text-slate-900 text-xs font-bold ml-1">
+                                                        {venue.rating}
+                                                    </Text>
+                                                </View>
+                                            </View>
+
+                                            {/* Bottom Info */}
+                                            <View className="absolute bottom-4 left-4 right-4">
+                                                <Text className="text-white font-bold text-xl mb-1">
+                                                    {getLocalizedValue(venue.name, venue.name_ar, language)}
+                                                </Text>
+                                                <View className="flex-row items-center">
+                                                    <MapPin size={14} color="rgba(255,255,255,0.9)" />
+                                                    <Text className="text-white/90 ml-1.5 text-sm font-medium">
+                                                        {getLocalizedValue(venue.address, venue.address_ar, language)} | {venue.distance}
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                        </View>
+
+                                        {/* Price Section */}
+                                        <View className="px-4 py-4 flex-row items-center justify-between bg-gradient-to-b from-slate-50 to-white">
+                                            <View>
+                                                <Text className="text-slate-500 text-xs font-medium mb-0.5">
+                                                    {t('venue.pricePerHour')}
+                                                </Text>
+                                                <Text className="text-blue-600 font-extrabold text-xl">
+                                                    {venue.price}
                                                 </Text>
                                             </View>
-                                            <View className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
-                                                <Star size={12} color="#fbbf24" fill="#fbbf24" />
-                                                <Text className="text-slate-900 text-xs font-bold ml-1">
-                                                    {venue.rating}
-                                                </Text>
+                                            <View className="bg-blue-600 px-5 py-2.5 rounded-xl shadow-lg shadow-blue-200">
+                                                <Text className="text-white text-sm font-bold">{t('venue.bookThisVenue')}</Text>
                                             </View>
                                         </View>
-
-                                        {/* Bottom Info */}
-                                        <View className="absolute bottom-4 left-4 right-4">
-                                            <Text className="text-white font-bold text-xl mb-1">
-                                                {getLocalizedValue(venue.name, venue.name_ar, language)}
-                                            </Text>
-                                            <View className="flex-row items-center">
-                                                <MapPin size={14} color="rgba(255,255,255,0.9)" />
-                                                <Text className="text-white/90 ml-1.5 text-sm font-medium">
-                                                    {getLocalizedValue(venue.address, venue.address_ar, language)} | {venue.distance}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                    </View>
-
-                                    {/* Price Section */}
-                                    <View className="px-4 py-4 flex-row items-center justify-between bg-gradient-to-b from-slate-50 to-white">
-                                        <View>
-                                            <Text className="text-slate-500 text-xs font-medium mb-0.5">
-                                                {t('venue.pricePerHour')}
-                                            </Text>
-                                            <Text className="text-blue-600 font-extrabold text-xl">
-                                                {venue.price}
-                                            </Text>
-                                        </View>
-                                        <View className="bg-blue-600 px-5 py-2.5 rounded-xl shadow-lg shadow-blue-200">
-                                            <Text className="text-white text-sm font-bold">{t('venue.bookThisVenue')}</Text>
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            </Link>
-                        ))}
-                    </ScrollView>
+                                    </TouchableOpacity>
+                                </Link>
+                            ))}
+                        </ScrollView>
+                    )}
                 </View>
 
                 {/* Nearby List - Card Style */}
@@ -197,59 +226,67 @@ export default function DiscoveryScreen() {
                         <Text className="text-xl font-bold text-slate-900 ml-2">{t('discovery.nearYou')}</Text>
                     </View>
 
-                    {venues.map((venue, index) => (
-                        <Link href={`/venue/${venue.id}`} key={venue.id} asChild>
-                            <TouchableOpacity
-                                className="bg-white rounded-2xl mb-4 overflow-hidden border border-slate-100 shadow-sm active:scale-98"
-                            >
-                                <View className="flex-row">
-                                    {/* Image */}
-                                    <View className="relative">
-                                        <Image
-                                            source={{ uri: venue.image }}
-                                            className="w-28 h-28"
-                                            resizeMode="cover"
-                                        />
-                                        {/* Rating Badge */}
-                                        <View className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-md px-2 py-1 rounded-full flex-row items-center">
-                                            <Star size={10} color="#fbbf24" fill="#fbbf24" />
-                                            <Text className="text-slate-900 text-xs font-bold ml-1">
-                                                {venue.rating}
-                                            </Text>
-                                        </View>
-                                    </View>
-
-                                    {/* Content */}
-                                    <View className="flex-1 p-4 justify-between">
-                                        <View>
-                                            <Text
-                                                className="text-slate-900 font-bold text-base leading-tight mb-2"
-                                                numberOfLines={1}
-                                            >
-                                                {getLocalizedValue(venue.name, venue.name_ar, language)}
-                                            </Text>
-                                            <View className="flex-row items-center">
-                                                <MapPin size={14} color="#94a3b8" />
-                                                <Text className="text-slate-500 text-sm ml-1 font-medium">
-                                                    {getLocalizedValue(venue.address, venue.address_ar, language)} | {venue.distance}
+                    {filteredVenues.length === 0 ? (
+                        <View className="bg-white rounded-2xl p-8 border border-slate-100 items-center justify-center shadow-sm">
+                            <Text className="text-slate-400 font-bold text-center">
+                                No venues found matching your search
+                            </Text>
+                        </View>
+                    ) : (
+                        filteredVenues.map((venue, index) => (
+                            <Link href={`/venue/${venue.id}`} key={venue.id} asChild>
+                                <TouchableOpacity
+                                    className="bg-white rounded-2xl mb-4 overflow-hidden border border-slate-100 shadow-sm active:scale-98"
+                                >
+                                    <View className="flex-row">
+                                        {/* Image */}
+                                        <View className="relative">
+                                            <Image
+                                                source={{ uri: venue.image }}
+                                                className="w-28 h-28"
+                                                resizeMode="cover"
+                                            />
+                                            {/* Rating Badge */}
+                                            <View className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-md px-2 py-1 rounded-full flex-row items-center">
+                                                <Star size={10} color="#fbbf24" fill="#fbbf24" />
+                                                <Text className="text-slate-900 text-xs font-bold ml-1">
+                                                    {venue.rating}
                                                 </Text>
                                             </View>
                                         </View>
 
-                                        {/* Bottom Row */}
-                                        <View className="flex-row items-center justify-between mt-2">
-                                            <Text className="text-blue-600 font-extrabold text-lg">
-                                                {venue.price}
-                                            </Text>
-                                            <View className="bg-blue-600 px-4 py-1.5 rounded-lg">
-                                                <Text className="text-white text-xs font-bold">{t('booking.bookVenue')}</Text>
+                                        {/* Content */}
+                                        <View className="flex-1 p-4 justify-between">
+                                            <View>
+                                                <Text
+                                                    className="text-slate-900 font-bold text-base leading-tight mb-2"
+                                                    numberOfLines={1}
+                                                >
+                                                    {getLocalizedValue(venue.name, venue.name_ar, language)}
+                                                </Text>
+                                                <View className="flex-row items-center">
+                                                    <MapPin size={14} color="#94a3b8" />
+                                                    <Text className="text-slate-500 text-sm ml-1 font-medium">
+                                                        {getLocalizedValue(venue.address, venue.address_ar, language)} | {venue.distance}
+                                                    </Text>
+                                                </View>
+                                            </View>
+
+                                            {/* Bottom Row */}
+                                            <View className="flex-row items-center justify-between mt-2">
+                                                <Text className="text-blue-600 font-extrabold text-lg">
+                                                    {venue.price}
+                                                </Text>
+                                                <View className="bg-blue-600 px-4 py-1.5 rounded-lg">
+                                                    <Text className="text-white text-xs font-bold">{t('booking.bookVenue')}</Text>
+                                                </View>
                                             </View>
                                         </View>
                                     </View>
-                                </View>
-                            </TouchableOpacity>
-                        </Link>
-                    ))}
+                                </TouchableOpacity>
+                            </Link>
+                        ))
+                    )}
                 </View>
 
                 {/* Bottom Spacing */}
