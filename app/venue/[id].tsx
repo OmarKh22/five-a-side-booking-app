@@ -7,10 +7,10 @@ import {
 } from "lucide-react-native";
 import { Button } from "../../components/ui/Button";
 import { useTranslation } from "react-i18next";
-import MapView, { Marker } from "react-native-maps";
 import { useVenueStore, Venue } from "../../store/venueStore";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useEffect, useState } from "react";
+import VenueMap from "../../components/VenueMap";
 
 const { width } = Dimensions.get('window');
 
@@ -254,27 +254,11 @@ export default function VenueDetailsScreen() {
                             </TouchableOpacity>
                         </View>
                         <View className="bg-slate-100 h-64 rounded-2xl overflow-hidden mt-3 border border-slate-200">
-                            <MapView
-                                style={{ width: '100%', height: '100%' }}
-                                initialRegion={{
-                                    latitude: venue.coordinates?.latitude || 40.7128,
-                                    longitude: venue.coordinates?.longitude || -74.0060,
-                                    latitudeDelta: 0.01,
-                                    longitudeDelta: 0.01,
-                                }}
-                            >
-                                {venue.coordinates && (
-                                    <Marker
-                                        coordinate={venue.coordinates}
-                                        title={displayName}
-                                        description={displayAddress}
-                                    >
-                                        <View className="bg-blue-600 p-2 rounded-full border-2 border-white shadow-lg">
-                                            <MapPin size={20} color="white" />
-                                        </View>
-                                    </Marker>
-                                )}
-                            </MapView>
+                            <VenueMap
+                                coordinates={venue.coordinates}
+                                displayName={displayName}
+                                displayAddress={displayAddress}
+                            />
                         </View>
                     </View>
                 </View>
