@@ -1,0 +1,66 @@
+env: load .env
+env: export EXPO_PUBLIC_SUPABASE_URL EXPO_PUBLIC_SUPABASE_ANON_KEY
+Starting project at E:\five-a-side-booking-app
+Starting Metro Bundler
+The following packages should be updated for best compatibility with the installed expo version:
+  expo@54.0.30 - expected version: ~54.0.35
+  expo-constants@18.0.12 - expected version: ~18.0.13
+  expo-linking@8.0.11 - expected version: ~8.0.12
+  expo-localization@17.0.8 - expected version: ~17.0.9
+  expo-router@6.0.21 - expected version: ~6.0.24
+  react-native-worklets@0.5.2 - expected version: 0.5.1
+  @expo/metro-config@54.0.12 - expected version: ~54.0.14
+  babel-preset-expo@54.0.9 - expected version: ~54.0.10
+Your project may not work correctly until you install the expected versions of the packages.
+Waiting on http://localhost:8081
+Logs for your project will appear below.
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web node_modules\expo-router\entry.js ▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 75.9% ( 712/2437)
+Web Bundling failed 4444ms node_modules\expo-router\entry.js (2576 modules)
+ ERROR  Importing native-only module "react-native/Libraries/Utilities/codegenNativeCommands" on web from: node_modules\react-native-maps\lib\MapMarkerNativeComponent.js
+
+Import stack:
+
+ node_modules\react-native-maps\lib\MapMarkerNativeComponent.js
+ | import "react-native/Libraries/Utilities/codegenNativeCommands"
+           ^ Importing react-native internals is not supported on web.
+
+ node_modules\react-native-maps\lib\MapMarker.js
+ | import "./MapMarkerNativeComponent"
+
+ node_modules\react-native-maps\lib\index.js
+ | import "./MapMarker"
+
+ app\venue\[id].tsx
+ | import "react-native-maps"
+
+ app (require.context)
+
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+| Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+|   npx update-browserslist-db@latest
+|   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Web node_modules\expo-router\entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 81.5% (2222/2461)
+Web Bundled 6176ms node_modules\expo-router\entry.js (2583 modules)
+Android node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Android Bundled 3262ms node_modules\expo-router\entry.js (3322 modules)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/th3rdwave/react-native-safe-area-context
+ ERROR  [AuthApiError: Invalid Refresh Token: Refresh Token Not Found] 
+
+Call Stack
+  construct (<native>)
+  apply (<native>)
+  _construct (node_modules\@babel\runtime\helpers\construct.js)
+  Wrapper (node_modules\@babel\runtime\helpers\wrapNativeSuper.js)
+  construct (<native>)
+  _callSuper (node_modules\@babel\runtime\helpers\callSuper.js)
+  AuthError#constructor (node_modules\@supabase\auth-js\dist\main\lib\errors.js)
+  construct (<native>)
+  _callSuper (node_modules\@babel\runtime\helpers\callSuper.js)
+  AuthApiError#constructor (node_modules\@supabase\auth-js\dist\main\lib\errors.js)
+  handleError (node_modules\@supabase\auth-js\dist\main\lib\fetch.js)
+  next (<native>)
+  asyncGeneratorStep (node_modules\@babel\runtime\helpers\asyncToGenerator.js)
+  _next (node_modules\@babel\runtime\helpers\asyncToGenerator.js)
+  tryCallOne (address at (InternalBytecode.js:1:1180)
+  anonymous (address at (InternalBytecode.js:1:1874)
