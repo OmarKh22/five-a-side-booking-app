@@ -8,6 +8,7 @@ import { Button } from "../../components/ui/Button";
 import { useBookingStore } from "../../store/bookingStore";
 import { useVenueStore } from "../../store/venueStore";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { supabase } from "../../lib/supabase";
 
 export default function BookingScreen() {
     const { id } = useLocalSearchParams();
@@ -59,27 +60,50 @@ export default function BookingScreen() {
     };
 
     const handleConfirmBooking = async () => {
-        if (!selectedTimeSlot) return;
+    if (!selectedTimeSlot || !id) return;
 
-        try {
-            await addBooking({
-                venue_id: Number(id),
-                date: selectedDate.toISOString().split('T')[0],
-                time_slot: selectedTimeSlot,
-                amount: 50,
-                // user_id will be handled by store
-            });
+    try {
+        // 1. Get current logged-in user ID from Supabase
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+            Alert.alert("Error", "You must be logged in to book.");
+            return;
+        }
 
+        // 2. Call the RPC function we just created
+        const { data, error } = await supabase.rpc('secure_create_booking', {
+            p_user_id: user.id,
+            p_venue_id: Number(id),
+            p_date: selectedDate.toISOString().split('T')[0],
+            p_time_slot: selectedTimeSlot, 
+            p_amount: 50
+        });
+
+        if (error) throw error;
+
+        const result = Array.isArray(data) ? data[0] : data;
+
+        if (result && result.success) {
+            // Success Alert
             Alert.alert(
                 `🎉 ${t('booking.bookingConfirmed')}`,
                 t('booking.bookingSuccess'),
                 [{ text: t('common.done'), onPress: () => router.dismissAll() }]
             );
-        } catch (error: any) {
-            console.error("Booking failed:", error);
-            Alert.alert("Booking Failed", error.message || "An unknown error occurred.");
+        } else {
+            // Friendly error message caught by the database constraint match
+            Alert.alert("Slot Unavailable", result.error_message);
+            
+            // Refresh slots to clear out the one they missed out on
+            fetchBookedSlots(Number(id), selectedDate.toISOString().split('T')[0]);
+            setSelectedTimeSlot(null);
         }
-    };
+
+    } catch (error: any) {
+        console.error(error);
+        Alert.alert("Booking Failed", "An unexpected error occurred.");
+    }
+};
 
     return (
         <View className="flex-1 bg-slate-50">
